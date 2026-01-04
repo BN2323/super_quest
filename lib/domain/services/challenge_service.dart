@@ -1,33 +1,38 @@
-import 'package:super_quest/domain/models/challenge.dart';
-import 'package:super_quest/domain/models/challenge_result.dart';
-import 'package:super_quest/domain/models/code_block.dart';
-import 'package:super_quest/domain/models/room.dart';
+import '../models/challenge.dart';
+import '../models/challenge_result.dart';
+import '../models/code_block.dart';
 
 class ChallengeService {
-  Challenge getChallengeForRoom(Room room) {
-    return room.challenge;
-  }
-
-  ChallengeResult submitAnswer({
+  /// Evaluates a user's block assembly solution.
+  ChallengeResult evaluate({
     required Challenge challenge,
     required List<CodeBlock> userBlocks,
     required int attemptNumber,
   }) {
-    final expected = challenge.expectedBlockOrder;
     final userOrder = userBlocks.map((b) => b.id).toList();
+    final expectedOrder = challenge.expectedBlockOrder;
 
-    final isCorrect = _compareOrder(expected, userOrder);
-    final isLastAttempt = attemptNumber >= challenge.maxAttempts;
+    final isCorrect = _isOrderCorrect(
+      expected: expectedOrder,
+      actual: userOrder,
+    );
+
+    final isGameOver =
+        !isCorrect && attemptNumber >= challenge.maxAttempts;
 
     return ChallengeResult(
       challengeId: challenge.id,
       success: isCorrect,
       attemptsUsed: attemptNumber,
-      isGameOver: !isCorrect && isLastAttempt,
+      isGameOver: isGameOver,
     );
   }
 
-  bool _compareOrder(List<String> expected, List<String> actual) {
+  /// Checks if the user's block order matches the expected solution.
+  bool _isOrderCorrect({
+    required List<String> expected,
+    required List<String> actual,
+  }) {
     if (expected.length != actual.length) return false;
 
     for (int i = 0; i < expected.length; i++) {
