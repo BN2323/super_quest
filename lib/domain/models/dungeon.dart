@@ -3,8 +3,7 @@ import 'package:super_quest/domain/models/room.dart';
 class Dungeon {
   final String id;
   final String name;
-  final String theme; // e.g. "Logic Basics"
-
+  final String theme;
   final List<Room> rooms;
 
   Dungeon({

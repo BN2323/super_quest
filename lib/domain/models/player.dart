@@ -4,7 +4,6 @@ class Player {
   final String id;
   int level;
   int xp;
-
   PlayerStats stats;
 
   Player({

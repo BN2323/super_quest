@@ -9,7 +9,7 @@ enum RoomStatus {
 class Room {
   final String id;
   final String name;
-  final int order; // position in dungeon
+  final int order;
   final bool isBossRoom;
 
   RoomStatus status;
