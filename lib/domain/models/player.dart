@@ -1,24 +1,35 @@
-import 'package:super_quest/domain/models/player_stats.dart';
+import 'player_stats.dart';
 
 class Player {
   int level;
   int xp;
+  final PlayerStats stats;
 
   Player({
     required this.level,
     required this.xp,
+    required this.stats,
   });
 
   factory Player.initial() {
-    return Player(level: 1, xp: 0);
+    return Player(
+      level: 1,
+      xp: 0,
+      stats: PlayerStats(),
+    );
   }
 
+  // ===== PROGRESSION =====
   void addXp(int amount) {
     xp += amount;
 
-    if (xp >= level * 100) {
-      xp = 0;
+    while (xp >= _xpToNextLevel()) {
+      xp -= _xpToNextLevel();
       level++;
     }
+  }
+
+  int _xpToNextLevel() {
+    return level * 100;
   }
 }
