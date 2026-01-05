@@ -1,35 +1,39 @@
-import 'package:super_quest/domain/models/dungeon.dart';
-import 'package:super_quest/domain/models/room.dart';
+import '../models/challenge_result.dart';
+import '../models/dungeon.dart';
+import '../models/player.dart';
+import '../models/room.dart';
 
 class GameService {
-  Room getCurrentRoom(Dungeon dungeon) {
-    return dungeon.rooms.firstWhere(
-      (room) => room.status == RoomStatus.unlocked,
-    );
-
-  }
-
-  void completeRoom({
+  void applyChallengeResult({
+    required ChallengeResult result,
+    required Player player,
+    required Room currentRoom,
     required Dungeon dungeon,
-    required Room room,
   }) {
-    room.status = RoomStatus.completed;
+    if (!result.success) return;
 
-    final currentIndex = dungeon.rooms.indexOf(room);
-    final nextIndex = currentIndex + 1;
+    currentRoom.complete();
 
-    if (nextIndex < dungeon.rooms.length) {
-      final nextRoom = dungeon.rooms[nextIndex];
+    player.addXp(50);
 
-      if (nextRoom.status == RoomStatus.locked) {
-        nextRoom.status = RoomStatus.unlocked;
-      }
-    }
+    final nextRoom = _getNextRoom(
+      dungeon: dungeon,
+      currentRoom: currentRoom,
+    );
+
+    nextRoom?.unlock();
   }
 
-  bool isDungeonCompleted(Dungeon dungeon) {
-    return dungeon.rooms.every(
-      (room) => room.status == RoomStatus.completed,
-    );
+  Room? _getNextRoom({
+    required Dungeon dungeon,
+    required Room currentRoom,
+  }) {
+    final currentIndex =
+        dungeon.rooms.indexWhere((r) => r.id == currentRoom.id);
+
+    if (currentIndex == -1) return null;
+    if (currentIndex >= dungeon.rooms.length - 1) return null;
+
+    return dungeon.rooms[currentIndex + 1];
   }
 }
