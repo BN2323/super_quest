@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:super_quest/presentation/controllers/game_controller.dart';
 import 'package:super_quest/presentation/screens/dungeon_map/dugneon_map_view.dart';
 
-class DugneonMapScreen extends StatelessWidget {
-  const DugneonMapScreen({super.key});
+import '../../controllers/game_controller.dart';
+import 'widgets/progress_header.dart';
+
+class DungeonMapScreen extends StatelessWidget {
+  const DungeonMapScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -13,24 +15,18 @@ class DugneonMapScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(controller.dungeon.name),
-        actions: [
-          PopupMenuButton<String>(
-            onSelected: (value) {
-              if (value == 'reset') {
-                controller.resetDungeon();
-              }
-            },
-            itemBuilder: (_) => const [
-              PopupMenuItem(
-                value: 'reset',
-                child: Text('Restart Dungeon'),  
-              )
-            ],
-          )
+        actions: const [
+          Icon(Icons.settings),
         ],
       ),
-
-      body: DungeonMapView(dungeon: controller.dungeon),
+      body: Column(
+        children: [
+          ProgressHeader(controller: controller),
+          Expanded(
+            child: DungeonMapView(dungeon: controller.dungeon),
+          ),
+        ],
+      ),
     );
   }
 }

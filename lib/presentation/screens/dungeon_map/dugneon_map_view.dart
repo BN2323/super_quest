@@ -1,26 +1,53 @@
 import 'package:flutter/material.dart';
-import 'package:super_quest/domain/models/dungeon.dart';
 import 'package:super_quest/presentation/screens/dungeon_map/widgets/room_card.dart';
-import 'package:super_quest/presentation/theme/app_spacing.dart';
+import '../../../domain/models/dungeon.dart';
+import 'map_layout.dart';
 
 class DungeonMapView extends StatelessWidget {
   final Dungeon dungeon;
 
-  const DungeonMapView({
-    super.key,
-    required this.dungeon,
-  });
+  const DungeonMapView({super.key, required this.dungeon});
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(AppSpacing.md),
-      child: ListView.separated(
-        itemCount: dungeon.rooms.length,
-        separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.md),
-        itemBuilder: (context, index) {
-          final room = dungeon.rooms[index];
-          return RoomCard(room: room);
+    final screenWidth = MediaQuery.of(context).size.width;
+    final mapHeight = MapLayout.mapHeight(dungeon.rooms.length);
+
+    return SingleChildScrollView(
+      child: SizedBox(
+        height: mapHeight,
+        child: Stack(
+          children: [
+            for (int i = 0; i < dungeon.rooms.length; i++)
+              _buildRoomNode(
+                context,
+                index: i,
+                screenWidth: screenWidth,
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRoomNode(
+    BuildContext context, {
+    required int index,
+    required double screenWidth,
+  }) {
+    final room = dungeon.rooms[index];
+    final pos = MapLayout.roomPosition(
+      index: index,
+      mapWidth: screenWidth,
+    );
+
+    return Positioned(
+      left: pos.dx,
+      top: pos.dy,
+      child: RoomNode(
+        room: room,
+        onTap: () {
+          // navigation later
         },
       ),
     );

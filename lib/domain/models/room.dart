@@ -1,4 +1,4 @@
-import 'package:super_quest/domain/models/challenge.dart';
+import 'challenge.dart';
 
 enum RoomStatus {
   locked,
@@ -23,4 +23,18 @@ class Room {
     required this.status,
     required this.challenge,
   });
+
+  bool get isLocked => status == RoomStatus.locked;
+  bool get isUnlocked => status == RoomStatus.unlocked;
+  bool get isCompleted => status == RoomStatus.completed;
+
+  void unlock() {
+    if (status == RoomStatus.locked) {
+      status = RoomStatus.unlocked;
+    }
+  }
+
+  void complete() {
+    status = RoomStatus.completed;
+  }
 }
