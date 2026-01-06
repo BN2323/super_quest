@@ -46,6 +46,7 @@ class MockGameData {
     static final Challenge challenge1 = Challenge(
     id: 'c1',
     description: 'Return true if x is even.',
+    type: ChallengeType.blockAssembly,
     availableBlocks: [
       ifBlock,
       conditionEven,
@@ -62,6 +63,7 @@ class MockGameData {
   static final Challenge challenge2 = Challenge(
     id: 'c2',
     description: 'Return true if x is even, otherwise false.',
+    type: ChallengeType.blockAssembly,
     availableBlocks: [
       ifBlock,
       conditionEven,
@@ -80,6 +82,7 @@ class MockGameData {
   static final Challenge challenge3 = Challenge(
     id: 'c3',
     description: 'Complete the full conditional logic.',
+    type: ChallengeType.blockAssembly,
     availableBlocks: [
       ifBlock,
       conditionEven,

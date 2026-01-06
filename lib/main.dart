@@ -4,7 +4,6 @@ import 'package:super_quest/data/mock/mock_game_data.dart';
 import 'package:super_quest/domain/services/challenge_service.dart';
 import 'package:super_quest/domain/services/game_service.dart';
 import 'package:super_quest/presentation/controllers/game_controller.dart';
-import 'package:super_quest/presentation/screens/app_entry.dart';
 import 'package:super_quest/presentation/screens/dungeon_map/dugneon_map_screen.dart';
 
 void main() {
@@ -29,7 +28,7 @@ class SuperQuestApp extends StatelessWidget {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'SuperQuest',
-        home: DugneonMapScreen(),
+        home: DungeonMapScreen()
       ),
     );
   }

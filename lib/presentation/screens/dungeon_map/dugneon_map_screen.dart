@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:super_quest/presentation/screens/dungeon_map/dugneon_map_view.dart';
+import 'package:super_quest/presentation/screens/dungeon_map/widgets/dugneon_map_view.dart';
 
 import '../../controllers/game_controller.dart';
 import 'widgets/progress_header.dart';
