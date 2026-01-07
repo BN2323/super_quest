@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:super_quest/data/datasource/local_game_save_data_source.dart';
+import 'package:super_quest/data/models/dungeon_progress.dart';
+import 'package:super_quest/data/models/game_save.dart';
+import 'package:super_quest/data/models/room_progress.dart';
+import 'package:super_quest/data/repositories/game_save_repository.dart';
 import '../../domain/models/code_block.dart';
 import '../../domain/models/challenge_outcome.dart';
 import '../../domain/models/dungeon.dart';
@@ -15,8 +20,10 @@ class GameController extends ChangeNotifier {
   final GameService gameService;
 
   // ===== GAME STATE =====
-  final GameWorld world;
-  final Player player;
+  final GameSaveRepository saveRepository;
+
+  GameWorld world;
+  Player player;
 
   late Dungeon _currentDungeon;
   late Room _currentRoom;
@@ -27,11 +34,13 @@ class GameController extends ChangeNotifier {
   GameController({
     required this.challengeService,
     required this.gameService,
+    required this.saveRepository,
     required this.world,
   }) : player = Player.initial() {
     _currentDungeon = world.firstDungeon;
     _currentRoom = _findInitialRoom(_currentDungeon);
   }
+
 
   // ===== GETTERS =====
 
@@ -147,6 +156,7 @@ class GameController extends ChangeNotifier {
     }
 
     _resetAttemptState();
+    saveGame();
     notifyListeners();
     return outcome;
   }
@@ -208,4 +218,66 @@ class GameController extends ChangeNotifier {
     _currentRoom = _findInitialRoom(_currentDungeon);
     notifyListeners();
   }
+
+
+  Future<void> loadGame() async {
+    final save = await saveRepository.load();
+    if (save == null) return;
+
+    // Player
+    player.level = save.level;
+    player.xp = save.xp;
+
+    // Dungeons
+    for (final dungeonProgress in save.dungeons) {
+      final dungeon = world.dungeons.firstWhere(
+        (d) => d.id == dungeonProgress.dungeonId,
+        orElse: () => throw Exception('Dungeon not found'),
+      );
+
+      dungeon.status = dungeonProgress.status;
+
+      // Rooms
+      for (final roomProgress in dungeonProgress.rooms) {
+        final room = dungeon.rooms.firstWhere(
+          (r) => r.id == roomProgress.roomId,
+          orElse: () => throw Exception('Room not found'),
+        );
+
+        room.status = roomProgress.status;
+        room.currentChallengeIndex = roomProgress.challengeIndex;
+      }
+    }
+
+    // Restore current dungeon & room
+    _currentDungeon = world.firstDungeon;
+    _currentRoom = _findInitialRoom(_currentDungeon);
+
+    notifyListeners();
+  }
+
+
+  Future<void> saveGame() async {
+  final save = GameSave(
+    level: player.level,
+    xp: player.xp,
+    dungeons: world.dungeons.map((dungeon) {
+      return DungeonProgress(
+        dungeonId: dungeon.id,
+        status: dungeon.status,
+        rooms: dungeon.rooms.map((room) {
+          return RoomProgress(
+            roomId: room.id,
+            status: room.status,
+            challengeIndex: room.currentChallengeIndex,
+          );
+        }).toList(),
+      );
+    }).toList(),
+  );
+
+  await saveRepository.save(save);
+}
+
+
 }

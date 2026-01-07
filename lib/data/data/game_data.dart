@@ -4,7 +4,7 @@ import 'package:super_quest/domain/models/dungeon.dart';
 import 'package:super_quest/domain/models/game_world.dart';
 import 'package:super_quest/domain/models/room.dart';
 
-class MockGameData {
+class GameData {
   // ======================
   // SHARED CODE BLOCKS
   // ======================

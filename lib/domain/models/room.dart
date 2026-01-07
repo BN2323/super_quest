@@ -60,6 +60,7 @@ class Room {
 
   void complete() {
     status = RoomStatus.completed;
+    currentChallengeIndex = 0;
   }
 
   void reset() {

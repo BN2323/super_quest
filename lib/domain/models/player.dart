@@ -3,23 +3,20 @@ import 'player_stats.dart';
 class Player {
   int level;
   int xp;
-  final PlayerStats stats;
 
   Player({
     required this.level,
     required this.xp,
-    required this.stats,
   });
 
   int get xpToNextLevel => level * 100;
 
   double get levelProgress => xp / xpToNextLevel;
-  
+
   factory Player.initial() {
     return Player(
       level: 1,
       xp: 0,
-      stats: PlayerStats(),
     );
   }
 
@@ -35,5 +32,17 @@ class Player {
 
   int _xpToNextLevel() {
     return level * 100;
+  }
+
+  Map<String, dynamic> toJson() => {
+    'level': level,
+    'xp': xp,
+  };
+
+  factory Player.fromJson(Map<String, dynamic> json) {
+    return Player(
+      level: json['level'],
+      xp: json['xp'],
+    );
   }
 }

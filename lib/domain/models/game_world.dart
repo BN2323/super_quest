@@ -6,4 +6,5 @@ class GameWorld {
   GameWorld({required this.dungeons});
 
   Dungeon get firstDungeon => dungeons.first;
+
 }

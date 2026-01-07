@@ -39,6 +39,15 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
     final isComplete = _solution.length == expectedLength;
 
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: AppColors.background,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          color: Colors.white,
+          onPressed: () => Navigator.pop(context),
+        )
+      ),
       backgroundColor: AppColors.background,
       body: SafeArea(
         child: Padding(

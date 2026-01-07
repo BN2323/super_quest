@@ -38,4 +38,5 @@ class Dungeon {
   void complete() {
     status = DungeonStatus.completed;
   }
+
 }
