@@ -11,7 +11,7 @@ class Challenge {
 
   final List<CodeBlock> availableBlocks;
   final List<String> expectedBlockOrder;
-  final int maxAttempts;
+  final int maxHints;
 
   Challenge({
     required this.id,
@@ -19,7 +19,7 @@ class Challenge {
     required this.description,
     required this.availableBlocks,
     required this.expectedBlockOrder,
-    required this.maxAttempts,
+    this.maxHints = 2,
   });
 
   bool isCorrect(List<CodeBlock> userBlocks) {

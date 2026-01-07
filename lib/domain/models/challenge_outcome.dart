@@ -1,28 +1,13 @@
 class ChallengeOutcome {
   final String challengeId;
-
-  final bool isCorrect;
-
-  final int blocksUsed;
-  final int optimalBlocks;
-
+  final int stars;
   final int xpGained;
+  final int hintsUsed;
 
   ChallengeOutcome({
     required this.challengeId,
-    required this.isCorrect,
-    required this.blocksUsed,
-    required this.optimalBlocks,
+    required this.stars,
     required this.xpGained,
+    required this.hintsUsed,
   });
-
-
-  double get efficiency =>
-      optimalBlocks / blocksUsed.clamp(optimalBlocks, 999);
-
-  int get starRating {
-    if (efficiency >= 1) return 3;
-    if (efficiency >= 0.8) return 2;
-    return 1;
-  }
 }

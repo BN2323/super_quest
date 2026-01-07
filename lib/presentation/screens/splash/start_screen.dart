@@ -45,31 +45,6 @@ class StartScreen extends StatelessWidget {
                     );
                   },
                 )
-                // SizedBox(
-                //   width: double.infinity,
-                //   height: 56,
-                //   child: 
- 
-                  // ElevatedButton(
-                  //   style: ElevatedButton.styleFrom(
-                  //     backgroundColor: AppColors.primary,
-                  //     shape: RoundedRectangleBorder(
-                  //       borderRadius: BorderRadius.circular(18),
-                  //     ),
-                  //   ),
-                  //   onPressed: () {
-                  //     Navigator.pushReplacement(
-                  //       context,
-                  //       MaterialPageRoute(
-                  //         builder: (_) => const DungeonMapScreen(),
-                  //       ),
-                  //     );
-                  //   },
-                  //   child: Text(
-                  //     'START ADVENTURE',
-                  //     style: AppTextStyles.button,
-                  //   ),
-                  // ),
               ],
             ),
           ),
