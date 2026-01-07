@@ -4,7 +4,8 @@ import 'package:super_quest/domain/models/dungeon.dart';
 import 'package:super_quest/domain/models/room.dart';
 
 class MockGameData {
-  // ===== KEYWORDS =====
+  // ===== CODE BLOCKS =====
+
   static final CodeBlock ifBlock = CodeBlock(
     id: 'if',
     type: CodeBlockType.keyword,
@@ -19,7 +20,6 @@ class MockGameData {
     value: 'else',
   );
 
-  // ===== CONDITIONS =====
   static final CodeBlock conditionEven = CodeBlock(
     id: 'cond_even',
     type: CodeBlockType.condition,
@@ -27,7 +27,6 @@ class MockGameData {
     value: 'x % 2 == 0',
   );
 
-  // ===== ACTIONS =====
   static final CodeBlock returnTrue = CodeBlock(
     id: 'return_true',
     type: CodeBlockType.action,
@@ -42,11 +41,13 @@ class MockGameData {
     value: 'false',
   );
 
+  // ===== CHALLENGES =====
 
-    static final Challenge challenge1 = Challenge(
+  /// Room 1 – Simple if condition
+  static final Challenge challengeBasics = Challenge(
     id: 'c1',
-    description: 'Return true if x is even.',
     type: ChallengeType.blockAssembly,
+    description: 'Return true if x is even.',
     availableBlocks: [
       ifBlock,
       conditionEven,
@@ -57,13 +58,14 @@ class MockGameData {
       'cond_even',
       'return_true',
     ],
-    maxAttempts: 3,
+    maxHints: 2,
   );
 
-  static final Challenge challenge2 = Challenge(
+  /// Room 2 – If with fallback
+  static final Challenge challengeCondition = Challenge(
     id: 'c2',
-    description: 'Return true if x is even, otherwise false.',
     type: ChallengeType.blockAssembly,
+    description: 'Return true if x is even, otherwise return false.',
     availableBlocks: [
       ifBlock,
       conditionEven,
@@ -76,13 +78,14 @@ class MockGameData {
       'return_true',
       'return_false',
     ],
-    maxAttempts: 3,
+    maxHints: 2,
   );
 
-  static final Challenge challenge3 = Challenge(
+  /// Room 3 – Full if / else logic (Boss)
+  static final Challenge challengeFullLogic = Challenge(
     id: 'c3',
-    description: 'Complete the full conditional logic.',
     type: ChallengeType.blockAssembly,
+    description: 'Complete the full conditional logic using if and else.',
     availableBlocks: [
       ifBlock,
       conditionEven,
@@ -97,26 +100,27 @@ class MockGameData {
       'else',
       'return_false',
     ],
-    maxAttempts: 2,
+    maxHints: 1, // Boss room → stricter
   );
 
+  // ===== ROOMS =====
 
-    static final Room room1 = Room(
+  static final Room room1 = Room(
     id: 'r1',
     name: 'Basics',
     order: 0,
     isBossRoom: false,
-    status: RoomStatus.completed,
-    challenge: challenge1,
+    status: RoomStatus.unlocked,
+    challenge: challengeBasics,
   );
 
   static final Room room2 = Room(
     id: 'r2',
-    name: 'Condition',
+    name: 'Conditions',
     order: 1,
     isBossRoom: false,
-    status: RoomStatus.completed,
-    challenge: challenge2,
+    status: RoomStatus.locked,
+    challenge: challengeCondition,
   );
 
   static final Room room3 = Room(
@@ -124,39 +128,40 @@ class MockGameData {
     name: 'Full Logic',
     order: 2,
     isBossRoom: true,
-    status: RoomStatus.unlocked,
-    challenge: challenge3,
+    status: RoomStatus.locked,
+    challenge: challengeFullLogic,
   );
 
   static final Room room4 = Room(
     id: 'r4',
-    name: 'Fuller Logic',
-    order: 2,
-    isBossRoom: true,
+    name: 'Advanced Logic',
+    order: 3,
+    isBossRoom: false,
     status: RoomStatus.locked,
-    challenge: challenge3,
+    challenge: challengeFullLogic,
   );
-  
+
   static final Room room5 = Room(
     id: 'r5',
-    name: 'Fuller Logic',
-    order: 2,
+    name: 'Logic Mastery',
+    order: 4,
     isBossRoom: true,
     status: RoomStatus.locked,
-    challenge: challenge3,
+    challenge: challengeFullLogic,
   );
+
+  // ===== DUNGEON =====
 
   static final Dungeon dungeon = Dungeon(
     id: 'd1',
     name: 'Logic Dungeon',
-    theme: 'Logic Basics',
+    theme: 'Conditional Thinking',
     rooms: [
       room1,
       room2,
       room3,
       room4,
-      room5
+      room5,
     ],
   );
 }
-

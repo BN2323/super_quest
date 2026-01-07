@@ -17,6 +17,8 @@ class RoomIntroScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final challenge = room.challenge;
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
@@ -42,25 +44,42 @@ class RoomIntroScreen extends StatelessWidget {
 
               const SizedBox(height: AppSpacing.sm),
 
-              // Room description (from challenge)
+              // Challenge description
               Text(
-                room.challenge.description,
+                challenge.description,
                 style: AppTextStyles.subtitle,
               ),
 
               const SizedBox(height: AppSpacing.xl),
 
-              // Room meta info
+              // Challenge type
               InfoCard(
                 title: 'Challenge Type',
-                value: room.challenge.type.name,
+                value: challenge.type.name,
               ),
 
               const SizedBox(height: AppSpacing.sm),
 
+              // Hint info
               InfoCard(
-                title: 'Max Attempts',
-                value: room.challenge.maxAttempts.toString(),
+                title: 'Hints Available',
+                value: '${challenge.maxHints}',
+              ),
+
+              const SizedBox(height: AppSpacing.sm),
+
+              // Star rules
+              const InfoCard(
+                title: 'Stars',
+                value: '3★ No hints • 2★ 1 hint • 1★ 2 hints',
+              ),
+
+              const SizedBox(height: AppSpacing.md),
+
+              // Retry reassurance
+              Text(
+                'You can retry this challenge anytime. Only your best result is saved.',
+                style: AppTextStyles.subtitle,
               ),
 
               const Spacer(),
@@ -69,7 +88,6 @@ class RoomIntroScreen extends StatelessWidget {
               PrimaryActionButton(
                 label: 'START CHALLENGE',
                 onPressed: () {
-                  print("room: $room");
                   Navigator.push(
                     context,
                     MaterialPageRoute(

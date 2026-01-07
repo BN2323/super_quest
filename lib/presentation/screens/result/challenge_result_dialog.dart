@@ -44,7 +44,6 @@ class ChallengeResultDialog extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Title
               Text(
                 'ROOM CLEARED!',
                 style: AppTextStyles.title,
@@ -52,12 +51,10 @@ class ChallengeResultDialog extends StatelessWidget {
 
               const SizedBox(height: AppSpacing.md),
 
-              // Stars
-              StarRow(outcome.starRating),
+              StarRow(outcome.stars),
 
               const SizedBox(height: AppSpacing.md),
 
-              // XP
               Text(
                 '+${outcome.xpGained} XP',
                 style: AppTextStyles.subtitle.copyWith(
@@ -67,15 +64,15 @@ class ChallengeResultDialog extends StatelessWidget {
 
               const SizedBox(height: AppSpacing.sm),
 
-              // Efficiency
               Text(
-                'Blocks used: ${outcome.blocksUsed} / ${outcome.optimalBlocks}',
-                style: AppTextStyles.subtitle,
+                'Hints used: ${outcome.hintsUsed} / 2',
+                style: AppTextStyles.subtitle.copyWith(
+                  color: AppColors.textSecondary,
+                ),
               ),
 
               const SizedBox(height: AppSpacing.lg),
 
-              // Primary action
               PrimaryActionButton(
                 label: 'NEXT ROOM',
                 onPressed: onNext,

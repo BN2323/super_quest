@@ -18,7 +18,8 @@ class SolutionArena extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 240, // 🔒 fixed arena
+      height: 240,
+      width: double.infinity, 
       child: DragTarget<CodeBlock>(
         onAccept: (block) => blocks.add(block),
         builder: (_, __, ___) {
@@ -36,15 +37,26 @@ class SolutionArena extends StatelessWidget {
                       style: AppTextStyles.subtitle,
                     ),
                   )
-                : Wrap(
-                    spacing: AppSpacing.sm,
-                    runSpacing: AppSpacing.sm,
-                    children: blocks.map((b) {
-                      return GestureDetector(
-                        onTap: () => onRemove(b),
-                        child: CodeBlockChip(block: b),
+                : LayoutBuilder(
+                    builder: (context, constraints) {
+                      return SingleChildScrollView(
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(
+                            minWidth: constraints.maxWidth,
+                          ),
+                          child: Wrap(
+                            spacing: AppSpacing.sm,
+                            runSpacing: AppSpacing.sm,
+                            children: blocks.map((b) {
+                              return GestureDetector(
+                                onTap: () => onRemove(b),
+                                child: CodeBlockChip(block: b),
+                              );
+                            }).toList(),
+                          ),
+                        ),
                       );
-                    }).toList(),
+                    },
                   ),
           );
         },

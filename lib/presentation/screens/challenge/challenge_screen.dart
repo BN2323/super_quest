@@ -25,6 +25,9 @@ class ChallengeScreen extends StatefulWidget {
 class _ChallengeScreenState extends State<ChallengeScreen> {
   final List<CodeBlock> _solution = [];
   String? _feedback;
+  int _hintIndex = 0;
+  String? _hintText;
+
 
   @override
   Widget build(BuildContext context) {
@@ -55,6 +58,15 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                 onRemove: _removeBlock,
               ),
 
+              if (_hintText != null)
+              Padding(
+                padding: const EdgeInsets.only(top: AppSpacing.sm),
+                child: Text(
+                  _hintText!,
+                  style: const TextStyle(color: Colors.amber),
+                ),
+              ),
+
               if (_feedback != null) FeedbackText(_feedback!),
 
               const SizedBox(height: AppSpacing.md),
@@ -70,7 +82,10 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                 hasBlocks: _solution.isNotEmpty,
                 onReset: _resetSolution,
                 onSubmit: () => _submit(controller),
+                onHint: () => _useHint(controller),
+                canUseHint: controller.canUseHint,
               ),
+
             ],
           ),
         ),
@@ -84,6 +99,27 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
       _feedback = null;
     });
   }
+
+  void _useHint(GameController controller) {
+  if (!controller.canUseHint) {
+    setState(() {
+      _hintText = 'No hints left';
+    });
+    return;
+  }
+
+  final expected = widget.room.challenge.expectedBlockOrder;
+
+  if (_hintIndex >= expected.length) return;
+
+  controller.useHint();
+
+  setState(() {
+    _hintText = 'Next block should be: ${expected[_hintIndex]}';
+    _hintIndex++;
+  });
+}
+
 
   void _resetSolution() {
     setState(() {
@@ -110,12 +146,12 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
       builder: (_) => ChallengeResultDialog(
         outcome: outcome,
         onNext: () {
-          Navigator.pop(context);
-          Navigator.pop(context);
+          Navigator.of(context).pop();
+          controller.enterCurrentRoom(context);
         },
+
         onReturn: () {
-          Navigator.pop(context);
-          Navigator.pop(context);
+          Navigator.of(context).popUntil((route) => route.isFirst);
         },
       ),
     );
