@@ -3,6 +3,13 @@ import 'app_colors.dart';
 
 class AppTextStyles {
   // ===== HEADINGS =====
+  static const TextStyle titleLarge = TextStyle(
+    fontSize: 36,
+    fontWeight: FontWeight.bold,
+    color: AppColors.textPrimary,
+    letterSpacing: 1.2,
+  );
+  
   static const TextStyle title = TextStyle(
     fontSize: 24,
     fontWeight: FontWeight.w800,
