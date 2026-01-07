@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:super_quest/presentation/screens/dungeon_map/widgets/dugneon_map_view.dart';
-
-import '../../controllers/game_controller.dart';
-import 'widgets/progress_header.dart';
+import 'package:super_quest/presentation/controllers/game_controller.dart';
+import 'package:super_quest/presentation/screens/dungeon_map/widgets/button_action.dart';
+import 'package:super_quest/presentation/screens/dungeon_map/widgets/dugneon_map.dart';
+import 'package:super_quest/presentation/screens/dungeon_map/widgets/header.dart';
+import '../../theme/app_colors.dart';
 
 class DungeonMapScreen extends StatelessWidget {
   const DungeonMapScreen({super.key});
@@ -13,20 +14,19 @@ class DungeonMapScreen extends StatelessWidget {
     final controller = context.watch<GameController>();
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(controller.dungeon.name),
-        actions: const [
-          Icon(Icons.settings),
-        ],
-      ),
-      body: Column(
-        children: [
-          ProgressHeader(controller: controller),
-          Expanded(
-            child: DungeonMapView(dungeon: controller.dungeon),
-          ),
-        ],
+      backgroundColor: AppColors.background,
+      body: SafeArea(
+        child: Column(
+          children: [
+            Header(controller: controller),
+            Expanded(
+              child: DungeonMap(controller: controller),
+            ),
+            BottomAction(controller: controller),
+          ],
+        ),
       ),
     );
   }
 }
+

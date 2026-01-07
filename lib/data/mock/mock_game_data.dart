@@ -106,7 +106,7 @@ class MockGameData {
     name: 'Basics',
     order: 0,
     isBossRoom: false,
-    status: RoomStatus.unlocked,
+    status: RoomStatus.completed,
     challenge: challenge1,
   );
 
@@ -115,13 +115,31 @@ class MockGameData {
     name: 'Condition',
     order: 1,
     isBossRoom: false,
-    status: RoomStatus.locked,
+    status: RoomStatus.completed,
     challenge: challenge2,
   );
 
   static final Room room3 = Room(
     id: 'r3',
     name: 'Full Logic',
+    order: 2,
+    isBossRoom: true,
+    status: RoomStatus.unlocked,
+    challenge: challenge3,
+  );
+
+  static final Room room4 = Room(
+    id: 'r4',
+    name: 'Fuller Logic',
+    order: 2,
+    isBossRoom: true,
+    status: RoomStatus.locked,
+    challenge: challenge3,
+  );
+  
+  static final Room room5 = Room(
+    id: 'r5',
+    name: 'Fuller Logic',
     order: 2,
     isBossRoom: true,
     status: RoomStatus.locked,
@@ -136,6 +154,8 @@ class MockGameData {
       room1,
       room2,
       room3,
+      room4,
+      room5
     ],
   );
 }

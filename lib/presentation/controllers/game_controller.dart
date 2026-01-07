@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:super_quest/presentation/screens/room_intro/room_intro_screen.dart';
 
 import '../../domain/models/challenge_result.dart';
 import '../../domain/models/dungeon.dart';
@@ -33,10 +34,21 @@ class GameController extends ChangeNotifier {
 
   // ===== GAME FLOW =====
 
-  void enterRoom(Room room) {
+  void selectRoom(Room room) {
     _currentRoomIndex = dungeon.rooms.indexOf(room);
     _attemptsUsed = 0;
     notifyListeners();
+  }
+
+  void enterCurrentRoom(BuildContext context) {
+    if (currentRoom.status != RoomStatus.unlocked) return;
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => RoomIntroScreen(room: currentRoom),
+      ),
+    );
   }
 
   ChallengeResult submitChallenge({
