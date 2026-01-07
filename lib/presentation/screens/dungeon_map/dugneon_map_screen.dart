@@ -18,10 +18,18 @@ class DungeonMapScreen extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
+            // User dashboard
             Header(controller: controller),
+
+            // Map of rooms
             Expanded(
-              child: DungeonMap(controller: controller),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: DungeonMap(controller: controller),
+              ),
             ),
+
+            // Bottom call to action
             BottomAction(controller: controller),
           ],
         ),

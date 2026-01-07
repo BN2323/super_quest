@@ -3,6 +3,7 @@ import 'package:super_quest/presentation/controllers/game_controller.dart';
 import 'package:super_quest/presentation/theme/app_colors.dart';
 import 'package:super_quest/presentation/theme/app_spacing.dart';
 import 'package:super_quest/presentation/theme/app_text_styles.dart';
+import 'package:super_quest/presentation/widgets/buttons/primary_action_button.dart';
 
 class BottomAction extends StatelessWidget {
   final GameController controller;
@@ -17,25 +18,32 @@ class BottomAction extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.all(AppSpacing.md),
-      child: SizedBox(
-        width: double.infinity,
-        height: 56,
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.primary,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(18),
-            ),
-          ),
-          onPressed: () {
-            controller.enterCurrentRoom(context);
-          },
-          child: Text(
-            'ENTER NEXT ROOM',
-            style: AppTextStyles.button,
-          ),
-        ),
-      ),
+      child: PrimaryActionButton(
+        label: 'ENTER NEXT ROOM',
+        onPressed: () {
+          controller.enterCurrentRoom(context);
+        },
+      )
+
+      // SizedBox(
+      //   width: double.infinity,
+      //   height: 56,
+      //   child: ElevatedButton(
+      //     style: ElevatedButton.styleFrom(
+      //       backgroundColor: AppColors.primary,
+      //       shape: RoundedRectangleBorder(
+      //         borderRadius: BorderRadius.circular(18),
+      //       ),
+      //     ),
+      //     onPressed: () {
+      //       controller.enterCurrentRoom(context);
+      //     },
+      //     child: Text(
+      //       'ENTER NEXT ROOM',
+      //       style: AppTextStyles.button,
+      //     ),
+      //   ),
+      // ),
     );
   }
 }

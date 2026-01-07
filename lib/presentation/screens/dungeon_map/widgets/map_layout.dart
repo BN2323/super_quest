@@ -14,9 +14,9 @@ class MapLayout {
     final rightX = centerX + horizontalOffset;
 
     double x;
-    if (index % 3 == 0) {
+    if (index == 0) {
       x = centerX;
-    } else if (index % 3 == 1) {
+    } else if (index.isOdd) {
       x = leftX;
     } else {
       x = rightX;
@@ -27,6 +27,6 @@ class MapLayout {
   }
 
   static double mapHeight(int roomCount) {
-    return roomCount * verticalSpacing + 200;
+    return (roomCount * verticalSpacing) + 120;
   }
 }
