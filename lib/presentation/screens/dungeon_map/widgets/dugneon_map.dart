@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:super_quest/presentation/controllers/game_controller.dart';
 import 'package:super_quest/presentation/screens/dungeon_map/widgets/map_layout.dart';
 import 'package:super_quest/presentation/screens/dungeon_map/widgets/room_card.dart';
-import 'package:super_quest/presentation/theme/app_spacing.dart';
 
 class DungeonMap extends StatelessWidget {
   final GameController controller;

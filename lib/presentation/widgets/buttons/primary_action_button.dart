@@ -4,7 +4,7 @@ import 'package:super_quest/presentation/theme/app_text_styles.dart';
 
 class PrimaryActionButton extends StatelessWidget {
   final String label;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
 
   const PrimaryActionButton({
     super.key,
@@ -15,7 +15,6 @@ class PrimaryActionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: double.infinity,
       height: 56,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(

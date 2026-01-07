@@ -1,22 +1,25 @@
 import '../models/challenge.dart';
-import '../models/challenge_result.dart';
+import '../models/challenge_outcome.dart';
 import '../models/code_block.dart';
 
 class ChallengeService {
-  ChallengeResult submitAttempt({
+  ChallengeOutcome? evaluateSolution({
     required Challenge challenge,
     required List<CodeBlock> userBlocks,
-    required int attemptNumber,
   }) {
-    final bool success = challenge.isCorrect(userBlocks);
-    final bool isGameOver =
-        !success && attemptNumber >= challenge.maxAttempts;
+    final isCorrect = challenge.isCorrect(userBlocks);
 
-    return ChallengeResult(
+    if (!isCorrect) return null;
+
+    final blocksUsed = userBlocks.length;
+    final optimalBlocks = challenge.expectedBlockOrder.length;
+
+    return ChallengeOutcome(
       challengeId: challenge.id,
-      success: success,
-      attemptsUsed: attemptNumber,
-      isGameOver: isGameOver,
+      isCorrect: true,
+      blocksUsed: blocksUsed,
+      optimalBlocks: optimalBlocks,
+      xpGained: 50,
     );
   }
 }

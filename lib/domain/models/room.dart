@@ -37,4 +37,10 @@ class Room {
   void complete() {
     status = RoomStatus.completed;
   }
+
+  void reset() {
+    if (status == RoomStatus.completed) {
+      status = RoomStatus.unlocked;
+    }
+  }
 }

@@ -1,20 +1,18 @@
-import '../models/challenge_result.dart';
+import '../models/challenge_outcome.dart';
 import '../models/dungeon.dart';
 import '../models/player.dart';
 import '../models/room.dart';
 
 class GameService {
-  void applyChallengeResult({
-    required ChallengeResult result,
+  void applyOutcome({
+    required ChallengeOutcome outcome,
     required Player player,
     required Room currentRoom,
     required Dungeon dungeon,
   }) {
-    if (!result.success) return;
-
     currentRoom.complete();
 
-    player.addXp(50);
+    player.addXp(outcome.xpGained);
 
     final nextRoom = _getNextRoom(
       dungeon: dungeon,
@@ -28,12 +26,13 @@ class GameService {
     required Dungeon dungeon,
     required Room currentRoom,
   }) {
-    final currentIndex =
-        dungeon.rooms.indexWhere((r) => r.id == currentRoom.id);
+    final index = dungeon.rooms.indexWhere(
+      (r) => r.id == currentRoom.id,
+    );
 
-    if (currentIndex == -1) return null;
-    if (currentIndex >= dungeon.rooms.length - 1) return null;
+    if (index == -1) return null;
+    if (index >= dungeon.rooms.length - 1) return null;
 
-    return dungeon.rooms[currentIndex + 1];
+    return dungeon.rooms[index + 1];
   }
 }

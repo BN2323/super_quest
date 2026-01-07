@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:super_quest/domain/models/room.dart';
+import 'package:super_quest/presentation/screens/challenge/challenge_screen.dart';
 import 'package:super_quest/presentation/widgets/buttons/primary_action_button.dart';
 import 'package:super_quest/presentation/widgets/cards/info_card.dart';
 import '../../theme/app_colors.dart';
@@ -68,12 +69,13 @@ class RoomIntroScreen extends StatelessWidget {
               PrimaryActionButton(
                 label: 'START CHALLENGE',
                 onPressed: () {
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(
-                  //     builder: (_) => ChallengeScreen(room: room),
-                  //   ),
-                  // );
+                  print("room: $room");
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => ChallengeScreen(room: room),
+                    ),
+                  );
                 },
               ),
             ],

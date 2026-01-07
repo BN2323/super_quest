@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:super_quest/presentation/screens/room_intro/room_intro_screen.dart';
-
-import '../../domain/models/challenge_result.dart';
+import '../../domain/models/code_block.dart';
 import '../../domain/models/dungeon.dart';
 import '../../domain/models/player.dart';
 import '../../domain/models/room.dart';
-import '../../domain/models/code_block.dart';
+import '../../domain/models/challenge_outcome.dart';
 import '../../domain/services/challenge_service.dart';
 import '../../domain/services/game_service.dart';
+import '../screens/room_intro/room_intro_screen.dart';
 
 class GameController extends ChangeNotifier {
   // ===== Services =====
@@ -18,30 +17,43 @@ class GameController extends ChangeNotifier {
   final Dungeon dungeon;
   final Player player;
 
-  int _currentRoomIndex = 0;
-  int _attemptsUsed = 0;
+  Room? _selectedRoom;
 
   GameController({
     required this.challengeService,
     required this.gameService,
     required this.dungeon,
-  }) : player = Player.initial();
+  }) : player = Player.initial() {
+    _autoSelectActiveRoom();
+  }
 
   // ===== GETTERS =====
-  int get currentRoomIndex => _currentRoomIndex;
-  Room get currentRoom => dungeon.rooms[_currentRoomIndex];
-  int get attemptsUsed => _attemptsUsed;
 
-  // ===== GAME FLOW =====
+  Room get currentRoom => _selectedRoom ?? _findActiveRoom();
+
+  // ===== ROOM SELECTION =====
 
   void selectRoom(Room room) {
-    _currentRoomIndex = dungeon.rooms.indexOf(room);
-    _attemptsUsed = 0;
+    if (room.status == RoomStatus.locked) return;
+    _selectedRoom = room;
     notifyListeners();
   }
 
+  void _autoSelectActiveRoom() {
+    _selectedRoom = _findActiveRoom();
+  }
+
+  Room _findActiveRoom() {
+    return dungeon.rooms.firstWhere(
+      (r) => r.status == RoomStatus.unlocked,
+      orElse: () => dungeon.rooms.last,
+    );
+  }
+
+  // ===== NAVIGATION =====
+
   void enterCurrentRoom(BuildContext context) {
-    if (currentRoom.status != RoomStatus.unlocked) return;
+    if (currentRoom.status == RoomStatus.locked) return;
 
     Navigator.push(
       context,
@@ -51,39 +63,42 @@ class GameController extends ChangeNotifier {
     );
   }
 
-  ChallengeResult submitChallenge({
+  // ===== CHALLENGE FLOW =====
+
+  ChallengeOutcome? submitSolution({
     required List<CodeBlock> userBlocks,
   }) {
-    _attemptsUsed++;
+    final isReplay = currentRoom.status == RoomStatus.completed;
 
-    // 1️⃣ Validate challenge
-    final result = challengeService.submitAttempt(
+    final outcome = challengeService.evaluateSolution(
       challenge: currentRoom.challenge,
       userBlocks: userBlocks,
-      attemptNumber: _attemptsUsed,
     );
 
-    // 2️⃣ Apply result to game world
-    gameService.applyChallengeResult(
-      result: result,
-      player: player,
-      currentRoom: currentRoom,
-      dungeon: dungeon,
-    );
+    if (outcome == null) return null;
 
-    notifyListeners();
-    return result;
-  }
-
-  void resetDungeon() {
-    _currentRoomIndex = 0;
-    _attemptsUsed = 0;
-
-    for (final room in dungeon.rooms) {
-      room.status = RoomStatus.locked;
+    // Apply game changes only if NOT replay
+    if (!isReplay) {
+      gameService.applyOutcome(
+        outcome: outcome,
+        player: player,
+        currentRoom: currentRoom,
+        dungeon: dungeon,
+      );
     }
 
+    notifyListeners();
+    return outcome;
+  }
+
+  // ===== RESET =====
+
+  void resetGame() {
+    for (final room in dungeon.rooms) {
+      room.reset();
+    }
     dungeon.rooms.first.unlock();
+    _autoSelectActiveRoom();
     notifyListeners();
   }
 }
