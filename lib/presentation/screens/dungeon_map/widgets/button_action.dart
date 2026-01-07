@@ -10,38 +10,18 @@ class BottomAction extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (!controller.currentRoom.isUnlocked) {
+    if (controller.currentRoom.isLocked) {
       return const SizedBox.shrink();
     }
 
     return Padding(
       padding: const EdgeInsets.all(AppSpacing.md),
       child: PrimaryActionButton(
-        label: 'ENTER NEXT ROOM',
+        label: 'ENTER ROOM',
         onPressed: () {
           controller.enterCurrentRoom(context);
         },
       )
-
-      // SizedBox(
-      //   width: double.infinity,
-      //   height: 56,
-      //   child: ElevatedButton(
-      //     style: ElevatedButton.styleFrom(
-      //       backgroundColor: AppColors.primary,
-      //       shape: RoundedRectangleBorder(
-      //         borderRadius: BorderRadius.circular(18),
-      //       ),
-      //     ),
-      //     onPressed: () {
-      //       controller.enterCurrentRoom(context);
-      //     },
-      //     child: Text(
-      //       'ENTER NEXT ROOM',
-      //       style: AppTextStyles.button,
-      //     ),
-      //   ),
-      // ),
     );
   }
 }

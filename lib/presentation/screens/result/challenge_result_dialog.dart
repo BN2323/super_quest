@@ -1,96 +1,74 @@
 import 'package:flutter/material.dart';
 import 'package:super_quest/presentation/screens/result/widgets/star_row.dart';
+import 'package:super_quest/presentation/theme/app_colors.dart';
 import 'package:super_quest/presentation/widgets/buttons/primary_action_button.dart';
 import '../../../domain/models/challenge_outcome.dart';
-import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/app_text_styles.dart';
 
 class ChallengeResultDialog extends StatelessWidget {
   final ChallengeOutcome outcome;
+  final bool isRoomComplete;
   final VoidCallback onNext;
   final VoidCallback onReturn;
 
   const ChallengeResultDialog({
     super.key,
     required this.outcome,
+    required this.isRoomComplete,
     required this.onNext,
     required this.onReturn,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Material(
-        color: Colors.transparent,
-        child: Container(
-          margin: const EdgeInsets.all(AppSpacing.lg),
-          padding: const EdgeInsets.all(AppSpacing.lg),
-          decoration: BoxDecoration(
-            color: AppColors.surface,
-            borderRadius: BorderRadius.circular(24),
-            border: Border.all(
-              color: AppColors.accent,
-              width: 3,
+    return Dialog(
+      backgroundColor: AppColors.background,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.lg),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // ===== TITLE =====
+            Text(
+              isRoomComplete ? 'Room Complete!' : 'Challenge Complete!',
+              style: AppTextStyles.title,
             ),
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.accent.withValues(alpha: 0.35),
-                blurRadius: 30,
-                spreadRadius: 4,
-              ),
-            ],
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'ROOM CLEARED!',
-                style: AppTextStyles.title,
-              ),
 
-              const SizedBox(height: AppSpacing.md),
+            const SizedBox(height: AppSpacing.md),
 
-              StarRow(outcome.stars),
+            // ===== STARS =====
+            StarRow(outcome.stars),
 
-              const SizedBox(height: AppSpacing.md),
+            const SizedBox(height: AppSpacing.sm),
 
-              Text(
-                '+${outcome.xpGained} XP',
-                style: AppTextStyles.subtitle.copyWith(
-                  color: AppColors.accent,
-                ),
-              ),
+            // ===== STATS =====
+            Text('XP Gained: ${outcome.xpGained}',
+                style: AppTextStyles.body),
+            Text('Hints Used: ${outcome.hintsUsed}',
+                style: AppTextStyles.bodyMuted),
 
+            const SizedBox(height: AppSpacing.lg),
+
+            // ===== ACTIONS =====
+            PrimaryActionButton(
+              label: isRoomComplete
+                  ? 'CONTINUE'
+                  : 'NEXT CHALLENGE',
+              onPressed: onNext,
+            ),
+
+            if (!isRoomComplete) ...[
               const SizedBox(height: AppSpacing.sm),
-
-              Text(
-                'Hints used: ${outcome.hintsUsed} / 2',
-                style: AppTextStyles.subtitle.copyWith(
-                  color: AppColors.textSecondary,
-                ),
-              ),
-
-              const SizedBox(height: AppSpacing.lg),
-
-              PrimaryActionButton(
-                label: 'NEXT ROOM',
-                onPressed: onNext,
-              ),
-
-              const SizedBox(height: AppSpacing.sm),
-
               TextButton(
                 onPressed: onReturn,
-                child: Text(
-                  'RETURN TO MAP',
-                  style: AppTextStyles.button.copyWith(
-                    color: AppColors.textSecondary,
-                  ),
-                ),
+                child: const Text('RETURN TO MAP'),
               ),
             ],
-          ),
+          ],
         ),
       ),
     );

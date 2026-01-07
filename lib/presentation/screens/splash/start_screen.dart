@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:super_quest/presentation/screens/dungeon_map/dugneon_map_screen.dart';
+import 'package:super_quest/presentation/screens/dungeon_select_screen/dungeon_select_screen.dart';
 import 'package:super_quest/presentation/widgets/buttons/primary_action_button.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_text_styles.dart';
@@ -40,7 +41,7 @@ class StartScreen extends StatelessWidget {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => const DungeonMapScreen(),
+                        builder: (_) => const DungeonSelectScreen(),
                       ),
                     );
                   },

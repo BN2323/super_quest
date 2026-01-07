@@ -11,6 +11,10 @@ class Player {
     required this.stats,
   });
 
+  int get xpToNextLevel => level * 100;
+
+  double get levelProgress => xp / xpToNextLevel;
+  
   factory Player.initial() {
     return Player(
       level: 1,

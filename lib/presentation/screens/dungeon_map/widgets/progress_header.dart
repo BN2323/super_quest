@@ -27,7 +27,7 @@ class ProgressHeader extends StatelessWidget {
               style: AppTextStyles.subtitle,
             ),
             Text(
-              'Room ${controller.currentRoom.order}/${controller.dungeon.rooms.length}',
+              'Room ${controller.currentRoom.order}/${controller.currentDungeon.rooms.length}',
               style: AppTextStyles.subtitle,
             ),
           ],

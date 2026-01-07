@@ -1,10 +1,13 @@
 import 'package:super_quest/domain/models/challenge.dart';
 import 'package:super_quest/domain/models/code_block.dart';
 import 'package:super_quest/domain/models/dungeon.dart';
+import 'package:super_quest/domain/models/game_world.dart';
 import 'package:super_quest/domain/models/room.dart';
 
 class MockGameData {
-  // ===== CODE BLOCKS =====
+  // ======================
+  // SHARED CODE BLOCKS
+  // ======================
 
   static final CodeBlock ifBlock = CodeBlock(
     id: 'if',
@@ -18,6 +21,13 @@ class MockGameData {
     type: CodeBlockType.keyword,
     label: 'else',
     value: 'else',
+  );
+
+  static final CodeBlock forBlock = CodeBlock(
+    id: 'for',
+    type: CodeBlockType.keyword,
+    label: 'for',
+    value: 'for',
   );
 
   static final CodeBlock conditionEven = CodeBlock(
@@ -41,127 +51,238 @@ class MockGameData {
     value: 'false',
   );
 
-  // ===== CHALLENGES =====
+  // ======================
+  // LOGIC DUNGEON
+  // ======================
 
-  /// Room 1 – Simple if condition
-  static final Challenge challengeBasics = Challenge(
-    id: 'c1',
-    type: ChallengeType.blockAssembly,
-    description: 'Return true if x is even.',
-    availableBlocks: [
-      ifBlock,
-      conditionEven,
-      returnTrue,
-    ],
-    expectedBlockOrder: [
-      'if',
-      'cond_even',
-      'return_true',
-    ],
-    maxHints: 2,
-  );
-
-  /// Room 2 – If with fallback
-  static final Challenge challengeCondition = Challenge(
-    id: 'c2',
-    type: ChallengeType.blockAssembly,
-    description: 'Return true if x is even, otherwise return false.',
-    availableBlocks: [
-      ifBlock,
-      conditionEven,
-      returnTrue,
-      returnFalse,
-    ],
-    expectedBlockOrder: [
-      'if',
-      'cond_even',
-      'return_true',
-      'return_false',
-    ],
-    maxHints: 2,
-  );
-
-  /// Room 3 – Full if / else logic (Boss)
-  static final Challenge challengeFullLogic = Challenge(
-    id: 'c3',
-    type: ChallengeType.blockAssembly,
-    description: 'Complete the full conditional logic using if and else.',
-    availableBlocks: [
-      ifBlock,
-      conditionEven,
-      returnTrue,
-      elseBlock,
-      returnFalse,
-    ],
-    expectedBlockOrder: [
-      'if',
-      'cond_even',
-      'return_true',
-      'else',
-      'return_false',
-    ],
-    maxHints: 1, // Boss room → stricter
-  );
-
-  // ===== ROOMS =====
-
-  static final Room room1 = Room(
-    id: 'r1',
-    name: 'Basics',
-    order: 0,
-    isBossRoom: false,
-    status: RoomStatus.unlocked,
-    challenge: challengeBasics,
-  );
-
-  static final Room room2 = Room(
-    id: 'r2',
-    name: 'Conditions',
-    order: 1,
-    isBossRoom: false,
-    status: RoomStatus.locked,
-    challenge: challengeCondition,
-  );
-
-  static final Room room3 = Room(
-    id: 'r3',
-    name: 'Full Logic',
-    order: 2,
-    isBossRoom: true,
-    status: RoomStatus.locked,
-    challenge: challengeFullLogic,
-  );
-
-  static final Room room4 = Room(
-    id: 'r4',
-    name: 'Advanced Logic',
-    order: 3,
-    isBossRoom: false,
-    status: RoomStatus.locked,
-    challenge: challengeFullLogic,
-  );
-
-  static final Room room5 = Room(
-    id: 'r5',
-    name: 'Logic Mastery',
-    order: 4,
-    isBossRoom: true,
-    status: RoomStatus.locked,
-    challenge: challengeFullLogic,
-  );
-
-  // ===== DUNGEON =====
-
-  static final Dungeon dungeon = Dungeon(
-    id: 'd1',
+  static final Dungeon logicDungeon = Dungeon(
+    id: 'd_logic',
     name: 'Logic Dungeon',
     theme: 'Conditional Thinking',
+    status: DungeonStatus.unlocked,
     rooms: [
-      room1,
-      room2,
-      room3,
-      room4,
-      room5,
+      // ---- Room 1 ----
+      Room(
+        id: 'r_logic_1',
+        name: 'Basics',
+        order: 0,
+        isBossRoom: false,
+        status: RoomStatus.unlocked,
+        challenges: [
+          Challenge(
+            id: 'c_logic_1',
+            type: ChallengeType.blockAssembly,
+            description: 'Return true if x is even.',
+            availableBlocks: [
+              ifBlock,
+              conditionEven,
+              returnTrue,
+            ],
+            expectedBlockOrder: [
+              'if',
+              'cond_even',
+              'return_true',
+            ],
+            maxHints: 2,
+          ),
+        ],
+      ),
+
+      // ---- Room 2 ----
+      Room(
+        id: 'r_logic_2',
+        name: 'Conditions',
+        order: 1,
+        isBossRoom: false,
+        status: RoomStatus.locked,
+        challenges: [
+          Challenge(
+            id: 'c_logic_2',
+            type: ChallengeType.blockAssembly,
+            description: 'Return true if x is even, otherwise false.',
+            availableBlocks: [
+              ifBlock,
+              conditionEven,
+              returnTrue,
+              returnFalse,
+            ],
+            expectedBlockOrder: [
+              'if',
+              'cond_even',
+              'return_true',
+              'return_false',
+            ],
+            maxHints: 2,
+          ),
+        ],
+      ),
+
+      // ---- Boss Room (3 Challenges) ----
+      Room(
+        id: 'r_logic_boss',
+        name: 'Logic Boss',
+        order: 2,
+        isBossRoom: true,
+        status: RoomStatus.locked,
+        challenges: [
+          Challenge(
+            id: 'c_logic_boss_1',
+            type: ChallengeType.blockAssembly,
+            description: 'Check if x is even.',
+            availableBlocks: [
+              ifBlock,
+              conditionEven,
+              returnTrue,
+            ],
+            expectedBlockOrder: [
+              'if',
+              'cond_even',
+              'return_true',
+            ],
+            maxHints: 2,
+          ),
+          Challenge(
+            id: 'c_logic_boss_2',
+            type: ChallengeType.blockAssembly,
+            description: 'Handle both true and false cases.',
+            availableBlocks: [
+              ifBlock,
+              conditionEven,
+              returnTrue,
+              returnFalse,
+            ],
+            expectedBlockOrder: [
+              'if',
+              'cond_even',
+              'return_true',
+              'return_false',
+            ],
+            maxHints: 2,
+          ),
+          Challenge(
+            id: 'c_logic_boss_3',
+            type: ChallengeType.blockAssembly,
+            description: 'Master full if / else logic.',
+            availableBlocks: [
+              ifBlock,
+              conditionEven,
+              returnTrue,
+              elseBlock,
+              returnFalse,
+            ],
+            expectedBlockOrder: [
+              'if',
+              'cond_even',
+              'return_true',
+              'else',
+              'return_false',
+            ],
+            maxHints: 1,
+          ),
+        ],
+      ),
+    ],
+  );
+
+  // ======================
+  // LOOP DUNGEON
+  // ======================
+
+  static final Dungeon loopDungeon = Dungeon(
+    id: 'd_loop',
+    name: 'Loop Dungeon',
+    theme: 'Iteration & Control',
+    status: DungeonStatus.locked,
+    rooms: [
+      // ---- Room 1 ----
+      Room(
+        id: 'r_loop_1',
+        name: 'Simple Loop',
+        order: 0,
+        isBossRoom: false,
+        status: RoomStatus.locked,
+        challenges: [
+          Challenge(
+            id: 'c_loop_1',
+            type: ChallengeType.blockAssembly,
+            description: 'Repeat an action using a loop.',
+            availableBlocks: [
+              forBlock,
+            ],
+            expectedBlockOrder: [
+              'for',
+            ],
+            maxHints: 2,
+          ),
+        ],
+      ),
+
+      // ---- Boss Room (3 Challenges) ----
+      Room(
+        id: 'r_loop_boss',
+        name: 'Loop Boss',
+        order: 1,
+        isBossRoom: true,
+        status: RoomStatus.locked,
+        challenges: [
+          Challenge(
+            id: 'c_loop_boss_1',
+            type: ChallengeType.blockAssembly,
+            description: 'Use a loop.',
+            availableBlocks: [
+              forBlock,
+            ],
+            expectedBlockOrder: [
+              'for',
+            ],
+            maxHints: 2,
+          ),
+          Challenge(
+            id: 'c_loop_boss_2',
+            type: ChallengeType.blockAssembly,
+            description: 'Combine loop with condition.',
+            availableBlocks: [
+              forBlock,
+              ifBlock,
+              conditionEven,
+            ],
+            expectedBlockOrder: [
+              'for',
+              'if',
+              'cond_even',
+            ],
+            maxHints: 1,
+          ),
+          Challenge(
+            id: 'c_loop_boss_3',
+            type: ChallengeType.blockAssembly,
+            description: 'Reorder loop and condition logic.',
+            availableBlocks: [
+              forBlock,
+              ifBlock,
+              conditionEven,
+            ],
+            expectedBlockOrder: [
+              'if',
+              'for',
+              'cond_even',
+            ],
+            maxHints: 1,
+          ),
+        ],
+      ),
+    ],
+  );
+
+  // ======================
+  // GAME WORLD
+  // ======================
+
+  static final GameWorld world = GameWorld(
+    dungeons: [
+      logicDungeon,
+      loopDungeon,
+      // add more later (functions, arrays, final boss, etc.)
     ],
   );
 }

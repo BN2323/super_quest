@@ -17,9 +17,22 @@ class RoomIntroScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final challenge = room.challenge;
-
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: AppColors.background,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          color: Colors.white,
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Text(
+          room.name,
+          style: AppTextStyles.title,
+        ),
+        centerTitle: true,
+      ),
+
       backgroundColor: AppColors.background,
       body: SafeArea(
         child: Padding(
@@ -27,74 +40,53 @@ class RoomIntroScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Back button
-              IconButton(
-                icon: const Icon(Icons.arrow_back),
-                color: Colors.white,
-                onPressed: () => Navigator.pop(context),
+
+              // Room type
+              Text(
+                room.isBossRoom
+                    ? 'Boss Room'
+                    : 'Standard Room',
+                style: AppTextStyles.subtitle.copyWith(
+                  color: room.isBossRoom
+                      ? AppColors.accent
+                      : Colors.white70,
+                ),
               ),
 
-              const SizedBox(height: AppSpacing.lg),
+              const SizedBox(height: AppSpacing.md),
 
-              // Room title
+              // Room description
               Text(
-                room.name,
-                style: AppTextStyles.title,
-              ),
-
-              const SizedBox(height: AppSpacing.sm),
-
-              // Challenge description
-              Text(
-                challenge.description,
+                room.isBossRoom
+                    ? 'This room contains multiple challenges.\nExpect tougher logic and fewer hints.'
+                    : 'Complete all challenges in this room to progress.',
                 style: AppTextStyles.subtitle,
               ),
 
               const SizedBox(height: AppSpacing.xl),
 
-              // Challenge type
+              // Room info cards
               InfoCard(
-                title: 'Challenge Type',
-                value: challenge.type.name,
-              ),
-
-              const SizedBox(height: AppSpacing.sm),
-
-              // Hint info
-              InfoCard(
-                title: 'Hints Available',
-                value: '${challenge.maxHints}',
-              ),
-
-              const SizedBox(height: AppSpacing.sm),
-
-              // Star rules
-              const InfoCard(
-                title: 'Stars',
-                value: '3★ No hints • 2★ 1 hint • 1★ 2 hints',
-              ),
-
-              const SizedBox(height: AppSpacing.md),
-
-              // Retry reassurance
-              Text(
-                'You can retry this challenge anytime. Only your best result is saved.',
-                style: AppTextStyles.subtitle,
+                title: 'Challenges',
+                value: '${room.challenges.length}',
               ),
 
               const Spacer(),
 
-              // Start challenge button
-              PrimaryActionButton(
-                label: 'START CHALLENGE',
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => ChallengeScreen(room: room),
-                    ),
-                  );
-                },
+              // Enter room
+              SizedBox(
+                width: double.infinity,
+                child: PrimaryActionButton(
+                  label: 'ENTER ROOM',
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => ChallengeScreen(room: room),
+                      ),
+                    );
+                  },
+                ),
               ),
             ],
           ),

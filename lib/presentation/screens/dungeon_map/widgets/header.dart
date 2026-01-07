@@ -11,6 +11,15 @@ class Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final player = controller.player;
+    final dungeon = controller.currentDungeon;
+
+    final totalRooms = dungeon.rooms.length;
+    final completedRooms =
+        dungeon.rooms.where((r) => r.isCompleted).length;
+
+    final levelProgress = player.levelProgress;
+
     return Container(
       margin: const EdgeInsets.all(AppSpacing.md),
       padding: const EdgeInsets.all(AppSpacing.md),
@@ -19,25 +28,56 @@ class Header extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            'Lv. ${controller.player.level}',
-            style: AppTextStyles.subtitle,
+          // ===== PLAYER LEVEL =====
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Lv. ${player.level}',
+                  style: AppTextStyles.subtitle,
+                ),
+                const SizedBox(height: 6),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: LinearProgressIndicator(
+                    value: levelProgress.clamp(0.0, 1.0),
+                    minHeight: 6,
+                    backgroundColor: Colors.white12,
+                    valueColor: const AlwaysStoppedAnimation(
+                      AppColors.accent,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
+
+          const SizedBox(width: AppSpacing.md),
+
+          // ===== DUNGEON PROGRESS =====
           Column(
             children: [
               Text(
-                controller.dungeon.name,
+                dungeon.name,
                 style: AppTextStyles.title,
               ),
+              const SizedBox(height: 4),
               Text(
-                '${controller.currentRoom.order}/${controller.dungeon.rooms.length}',
+                '$completedRooms / $totalRooms Rooms',
                 style: AppTextStyles.subtitle,
               ),
             ],
           ),
-          const Icon(Icons.map, color: AppColors.accent),
+
+          const SizedBox(width: AppSpacing.md),
+
+          // ===== ICON =====
+          const Icon(
+            Icons.map,
+            color: AppColors.accent,
+          ),
         ],
       ),
     );

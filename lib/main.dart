@@ -21,7 +21,7 @@ class SuperQuestApp extends StatelessWidget {
           create: (_) => GameController(
             challengeService: ChallengeService(),
             gameService: GameService(),
-            dungeon: MockGameData.dungeon,
+            world: MockGameData.world,
           ),
         ),
       ],

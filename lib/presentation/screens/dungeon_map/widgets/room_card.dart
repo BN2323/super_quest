@@ -75,7 +75,7 @@ class _RoomNodeState extends State<RoomNode>
         }
       },
       onTapUp: (_) {
-        if (widget.room.isUnlocked) {
+        if (widget.room.isUnlocked || widget.room.isCompleted) {
           setState(() => _pressed = false);
           widget.onTap?.call();
         }

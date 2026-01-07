@@ -13,7 +13,8 @@ class Room {
   final bool isBossRoom;
 
   RoomStatus status;
-  final Challenge challenge;
+  final List<Challenge> challenges;
+  int currentChallengeIndex;
 
   Room({
     required this.id,
@@ -21,12 +22,35 @@ class Room {
     required this.order,
     required this.isBossRoom,
     required this.status,
-    required this.challenge,
+    required this.challenges,
+    this.currentChallengeIndex = 0,
   });
+
+  // ===== STATE GETTERS =====
 
   bool get isLocked => status == RoomStatus.locked;
   bool get isUnlocked => status == RoomStatus.unlocked;
   bool get isCompleted => status == RoomStatus.completed;
+
+  // ===== CHALLENGE PROGRESSION =====
+
+  Challenge get currentChallenge =>
+      challenges[currentChallengeIndex];
+
+  bool get isLastChallenge =>
+      currentChallengeIndex >= challenges.length - 1;
+
+  void advanceChallenge() {
+    if (!isLastChallenge) {
+      currentChallengeIndex++;
+    }
+  }
+
+  void resetProgress() {
+    currentChallengeIndex = 0;
+  }
+
+  // ===== ROOM PROGRESSION =====
 
   void unlock() {
     if (status == RoomStatus.locked) {
@@ -42,5 +66,6 @@ class Room {
     if (status == RoomStatus.completed) {
       status = RoomStatus.unlocked;
     }
+    resetProgress();
   }
 }

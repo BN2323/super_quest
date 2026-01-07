@@ -10,7 +10,7 @@ class DungeonMap extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final rooms = controller.dungeon.rooms;
+    final rooms = controller.currentDungeon.rooms;
 
     return SingleChildScrollView(
       child: SizedBox(

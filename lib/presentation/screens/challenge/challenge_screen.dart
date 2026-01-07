@@ -10,6 +10,7 @@ import 'package:super_quest/presentation/screens/challenge/widgets/feedback_text
 import 'package:super_quest/presentation/screens/challenge/widgets/instruction_card.dart';
 import 'package:super_quest/presentation/screens/challenge/widgets/solution_arena.dart';
 import 'package:super_quest/presentation/screens/result/challenge_result_dialog.dart';
+import 'package:super_quest/presentation/screens/room_completed/room_completed.dart';
 import 'package:super_quest/presentation/theme/app_colors.dart';
 import 'package:super_quest/presentation/theme/app_spacing.dart';
 
@@ -32,7 +33,7 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
   @override
   Widget build(BuildContext context) {
     final controller = context.watch<GameController>();
-    final challenge = widget.room.challenge;
+    final challenge = widget.room.currentChallenge;
 
     final expectedLength = challenge.expectedBlockOrder.length;
     final isComplete = _solution.length == expectedLength;
@@ -101,24 +102,25 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
   }
 
   void _useHint(GameController controller) {
-  if (!controller.canUseHint) {
+    if (!controller.canUseHint) {
+      setState(() {
+        _hintText = 'No hints left';
+      });
+      return;
+    }
+
+    final expected = widget.room.currentChallenge.expectedBlockOrder;
+    final placed = _solution.length;
+
+    if (placed >= expected.length) return;
+
+    controller.useHint();
+
     setState(() {
-      _hintText = 'No hints left';
+      _hintText = 'Next block should be: ${expected[placed]}';
     });
-    return;
   }
 
-  final expected = widget.room.challenge.expectedBlockOrder;
-
-  if (_hintIndex >= expected.length) return;
-
-  controller.useHint();
-
-  setState(() {
-    _hintText = 'Next block should be: ${expected[_hintIndex]}';
-    _hintIndex++;
-  });
-}
 
 
   void _resetSolution() {
@@ -129,6 +131,8 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
   }
 
   void _submit(GameController controller) {
+    final room = controller.currentRoom;
+
     final outcome = controller.submitSolution(
       userBlocks: _solution,
     );
@@ -145,10 +149,31 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
       barrierDismissible: false,
       builder: (_) => ChallengeResultDialog(
         outcome: outcome,
+        isRoomComplete: room.isCompleted,
         onNext: () {
-          Navigator.of(context).pop();
-          controller.enterCurrentRoom(context);
+          Navigator.of(context).pop(); // close dialog
+
+          if (room.isCompleted) {
+            Navigator.of(context).pop(); // close ChallengeScreen
+
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (_) => RoomCompleteScreen(room: room),
+              ),
+            );
+          } else {
+            // Stay on same ChallengeScreen → reset state
+            setState(() {
+              _solution.clear();
+              _feedback = null;
+              _hintText = null;
+              _hintIndex = 0;
+            });
+            print('challenge: ${widget.room.currentChallengeIndex}');
+          }
         },
+
 
         onReturn: () {
           Navigator.of(context).popUntil((route) => route.isFirst);
@@ -156,4 +181,5 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
       ),
     );
   }
+
 }
