@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:super_quest/domain/models/challenge_outcome.dart';
 import 'package:super_quest/domain/models/code_block.dart';
+import 'package:super_quest/domain/models/dungeon.dart';
 import 'package:super_quest/domain/models/room.dart';
-import 'package:super_quest/presentation/controllers/game_controller.dart';
+import 'package:super_quest/domain/models/submit_result.dart';
 import 'package:super_quest/presentation/screens/challenge/widgets/action_bar.dart';
 import 'package:super_quest/presentation/screens/challenge/widgets/block_toolbox.dart';
 import 'package:super_quest/presentation/screens/challenge/widgets/challenge_header.dart';
@@ -15,9 +16,23 @@ import 'package:super_quest/presentation/theme/app_colors.dart';
 import 'package:super_quest/presentation/theme/app_spacing.dart';
 
 class ChallengeScreen extends StatefulWidget {
+  final Dungeon dungeon;
   final Room room;
 
-  const ChallengeScreen({super.key, required this.room});
+  final SubmitResult? Function({
+    required Room room,
+    required Dungeon dungeon,
+    required List<CodeBlock> userBlocks,
+    required int hintsUsed,
+  }) onSubmit;
+
+
+  const ChallengeScreen({
+    super.key,
+    required this.dungeon,
+    required this.room,
+    required this.onSubmit,
+  });
 
   @override
   State<ChallengeScreen> createState() => _ChallengeScreenState();
@@ -26,15 +41,12 @@ class ChallengeScreen extends StatefulWidget {
 class _ChallengeScreenState extends State<ChallengeScreen> {
   final List<CodeBlock> _solution = [];
   String? _feedback;
-  int _hintIndex = 0;
   String? _hintText;
-
+  int _hintsUsed = 0;
 
   @override
   Widget build(BuildContext context) {
-    final controller = context.watch<GameController>();
     final challenge = widget.room.currentChallenge;
-
     final expectedLength = challenge.expectedBlockOrder.length;
     final isComplete = _solution.length == expectedLength;
 
@@ -44,9 +56,8 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          color: Colors.white,
           onPressed: () => Navigator.pop(context),
-        )
+        ),
       ),
       backgroundColor: AppColors.background,
       body: SafeArea(
@@ -58,9 +69,7 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
               ChallengeHeader(room: widget.room),
 
               const SizedBox(height: AppSpacing.md),
-
               InstructionCard(text: challenge.description),
-
               const SizedBox(height: AppSpacing.lg),
 
               SolutionArena(
@@ -69,21 +78,19 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
               ),
 
               if (_hintText != null)
-              Padding(
-                padding: const EdgeInsets.only(top: AppSpacing.sm),
-                child: Text(
-                  _hintText!,
-                  style: const TextStyle(color: Colors.amber),
+                Padding(
+                  padding: const EdgeInsets.only(top: AppSpacing.sm),
+                  child: Text(
+                    _hintText!,
+                    style: const TextStyle(color: Colors.amber),
+                  ),
                 ),
-              ),
 
               if (_feedback != null) FeedbackText(_feedback!),
 
               const SizedBox(height: AppSpacing.md),
 
-              BlockToolbox(
-                blocks: challenge.availableBlocks,
-              ),
+              BlockToolbox(blocks: challenge.availableBlocks),
 
               const Spacer(),
 
@@ -91,17 +98,18 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                 isComplete: isComplete,
                 hasBlocks: _solution.isNotEmpty,
                 onReset: _resetSolution,
-                onSubmit: () => _submit(controller),
-                onHint: () => _useHint(controller),
-                canUseHint: controller.canUseHint,
+                onSubmit: _submit,
+                onHint: _useHint,
+                canUseHint: _hintsUsed < challenge.maxHints,
               ),
-
             ],
           ),
         ),
       ),
     );
   }
+
+  // ===== LOGIC =====
 
   void _removeBlock(CodeBlock block) {
     setState(() {
@@ -110,40 +118,37 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
     });
   }
 
-  void _useHint(GameController controller) {
-    if (!controller.canUseHint) {
-      setState(() {
-        _hintText = 'No hints left';
-      });
-      return;
-    }
-
+  void _useHint() {
     final expected = widget.room.currentChallenge.expectedBlockOrder;
     final placed = _solution.length;
 
-    if (placed >= expected.length) return;
+    if (_hintsUsed >= widget.room.currentChallenge.maxHints) {
+      setState(() => _hintText = 'No hints left');
+      return;
+    }
 
-    controller.useHint();
-
-    setState(() {
-      _hintText = 'Next block should be: ${expected[placed]}';
-    });
+    if (placed < expected.length) {
+      setState(() {
+        _hintsUsed++;
+        _hintText = 'Next block should be: ${expected[placed]}';
+      });
+    }
   }
-
-
 
   void _resetSolution() {
     setState(() {
       _solution.clear();
       _feedback = null;
+      _hintText = null;
     });
   }
 
-  void _submit(GameController controller) {
-    final room = controller.currentRoom;
-
-    final outcome = controller.submitSolution(
+  void _submit() {
+    final outcome = widget.onSubmit(
+      dungeon: widget.dungeon,
+      room: widget.room,
       userBlocks: _solution,
+      hintsUsed: _hintsUsed,
     );
 
     if (outcome == null) {
@@ -158,37 +163,31 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
       barrierDismissible: false,
       builder: (_) => ChallengeResultDialog(
         outcome: outcome,
-        isRoomComplete: room.isCompleted,
+        isRoomComplete: outcome.roomCompleted,
         onNext: () {
-          Navigator.of(context).pop(); // close dialog
+          Navigator.pop(context); // close dialog
 
-          if (room.isCompleted) {
-            Navigator.of(context).pop(); // close ChallengeScreen
-
+          print('room is completed: ${outcome.roomCompleted}');
+          if (outcome.roomCompleted) {
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                builder: (_) => RoomCompleteScreen(room: room),
+                builder: (_) => RoomCompleteScreen(currentDungeon: widget.dungeon, room: widget.room, isDungeonCompleted: outcome.dungeonCompleted,),
               ),
             );
           } else {
-            // Stay on same ChallengeScreen → reset state
             setState(() {
               _solution.clear();
               _feedback = null;
               _hintText = null;
-              _hintIndex = 0;
+              _hintsUsed = 0;
             });
-            print('challenge: ${widget.room.currentChallengeIndex}');
           }
         },
-
-
         onReturn: () {
-          Navigator.of(context).popUntil((route) => route.isFirst);
+          Navigator.of(context).popUntil((r) => r.isFirst);
         },
       ),
     );
   }
-
 }

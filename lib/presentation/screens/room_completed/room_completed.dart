@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:super_quest/domain/models/dungeon.dart';
 import 'package:super_quest/domain/models/room.dart';
-import 'package:super_quest/presentation/controllers/game_controller.dart';
 import 'package:super_quest/presentation/screens/dungeon_complete_screen/dungeon_complete_screen.dart';
-import 'package:super_quest/presentation/screens/dungeon_map/dugneon_map_screen.dart';
 import 'package:super_quest/presentation/theme/app_colors.dart';
 import 'package:super_quest/presentation/theme/app_spacing.dart';
 import 'package:super_quest/presentation/theme/app_text_styles.dart';
@@ -11,16 +9,18 @@ import 'package:super_quest/presentation/widgets/buttons/primary_action_button.d
 
 class RoomCompleteScreen extends StatelessWidget {
   final Room room;
-
+  final bool isDungeonCompleted;
+  final Dungeon currentDungeon;
+  
   const RoomCompleteScreen({
     super.key,
-    required this.room,
+    required this.room, 
+    required this.isDungeonCompleted, 
+    required this.currentDungeon,
   });
 
   @override
   Widget build(BuildContext context) {
-    final controller = context.watch<GameController>();
-    final bool isDungeonComplete = controller.isCurrentDungeonCompleted;
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -61,26 +61,21 @@ class RoomCompleteScreen extends StatelessWidget {
                 const Spacer(),
             
                 PrimaryActionButton(
-                  label: isDungeonComplete
+                  label: isDungeonCompleted
                       ? 'FINISH DUNGEON'
                       : 'BACK TO MAP',
                   onPressed: () {
-                    if (isDungeonComplete) {
+                    if (isDungeonCompleted) {
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
                           builder: (_) => DungeonCompleteScreen(
-                            dungeon: controller.currentDungeon,
+                            dungeon: currentDungeon,
                           ),
                         ),
                       );
                     } else {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const DungeonMapScreen(),
-                        ),
-                      );
+                      Navigator.pop(context);
                     }
                   },
                 ),

@@ -1,20 +1,34 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:super_quest/presentation/controllers/game_controller.dart';
+import 'package:super_quest/data/repositories/game_save_repository.dart';
+import 'package:super_quest/domain/models/dungeon.dart';
+import 'package:super_quest/domain/models/game_world.dart';
+import 'package:super_quest/domain/models/player.dart';
 import 'package:super_quest/presentation/screens/dungeon_map/dugneon_map_screen.dart';
 import 'package:super_quest/presentation/screens/dungeon_select_screen/widgets/dungeon_card.dart';
 import 'package:super_quest/presentation/theme/app_text_styles.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 
-class DungeonSelectScreen extends StatelessWidget {
-  const DungeonSelectScreen({super.key});
+class DungeonSelectScreen extends StatefulWidget {
+  final GameSaveRepository saveRepository;
+  final GameWorld world;
+  final Player player;
+  
+  const DungeonSelectScreen({super.key, required this.saveRepository, required this.world, required this.player});
+
+  @override
+  State<DungeonSelectScreen> createState() => _DungeonSelectScreenState();
+}
+
+class _DungeonSelectScreenState extends State<DungeonSelectScreen> {
+  late Dungeon currentDungeon;
+  
+  void selectDungeon(Dungeon dungeon) {
+    currentDungeon = dungeon;
+  }
 
   @override
   Widget build(BuildContext context) {
-    final controller = context.watch<GameController>();
-    final dungeons = controller.world.dungeons;
-
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -26,7 +40,7 @@ class DungeonSelectScreen extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(AppSpacing.md),
         child: GridView.builder(
-          itemCount: dungeons.length,
+          itemCount: widget.world.dungeons.length,
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
             mainAxisSpacing: AppSpacing.md,
@@ -34,17 +48,22 @@ class DungeonSelectScreen extends StatelessWidget {
             childAspectRatio: 1.1,
           ),
           itemBuilder: (context, index) {
-            final dungeon = dungeons[index];
+            final dungeon = widget.world.dungeons[index];
             return DungeonCard(
               dungeon: dungeon,
               onTap: dungeon.isLocked
                   ? null
                   : () {
-                      controller.selectDungeon(dungeon);
+                      selectDungeon(dungeon);
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => const DungeonMapScreen(),
+                          builder: (_) => DungeonMapScreen(
+                            world: widget.world,
+                            player: widget.player,
+                            saveRepository: widget.saveRepository,
+                            selectedDungeon: currentDungeon,
+                          ),
                         ),
                       );
                     },

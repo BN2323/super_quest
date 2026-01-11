@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:super_quest/presentation/controllers/game_controller.dart';
+import 'package:super_quest/domain/models/dungeon.dart';
+import 'package:super_quest/domain/models/room.dart';
 import 'package:super_quest/presentation/screens/dungeon_map/widgets/map_layout.dart';
 import 'package:super_quest/presentation/screens/dungeon_map/widgets/room_card.dart';
 
 class DungeonMap extends StatelessWidget {
-  final GameController controller;
+  final Dungeon currentDungeon;
+  final Room currentRoom;
+  final Function selectRoom;
 
-  const DungeonMap({super.key, required this.controller});
+  const DungeonMap({super.key, required this.currentDungeon, required this.currentRoom, required this.selectRoom});
 
   @override
   Widget build(BuildContext context) {
-    final rooms = controller.currentDungeon.rooms;
+    final rooms = currentDungeon.rooms;
 
     return SingleChildScrollView(
       child: SizedBox(
@@ -32,9 +35,9 @@ class DungeonMap extends StatelessWidget {
                   top: position.dy,
                   child: RoomNode(
                     room: room,
-                    isCurrent: room == controller.currentRoom,
+                    isCurrent: room == currentRoom,
                     onTap: () {
-                      controller.selectRoom(room);
+                      selectRoom(room);
                     },
                   ),
                 );

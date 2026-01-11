@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:super_quest/domain/models/submit_result.dart';
 import 'package:super_quest/presentation/screens/result/widgets/star_row.dart';
 import 'package:super_quest/presentation/theme/app_colors.dart';
 import 'package:super_quest/presentation/widgets/buttons/primary_action_button.dart';
-import '../../../domain/models/challenge_outcome.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/app_text_styles.dart';
 
 class ChallengeResultDialog extends StatelessWidget {
-  final ChallengeOutcome outcome;
+  final SubmitResult outcome;
   final bool isRoomComplete;
   final VoidCallback onNext;
   final VoidCallback onReturn;
@@ -41,14 +41,14 @@ class ChallengeResultDialog extends StatelessWidget {
             const SizedBox(height: AppSpacing.md),
 
             // ===== STARS =====
-            StarRow(outcome.stars),
+            StarRow(outcome.outcome.stars),
 
             const SizedBox(height: AppSpacing.sm),
 
             // ===== STATS =====
-            Text('XP Gained: ${outcome.xpGained}',
+            Text('XP Gained: ${outcome.outcome.xpGained}',
                 style: AppTextStyles.body),
-            Text('Hints Used: ${outcome.hintsUsed}',
+            Text('Hints Used: ${outcome.outcome.hintsUsed}',
                 style: AppTextStyles.bodyMuted),
 
             const SizedBox(height: AppSpacing.lg),
@@ -73,4 +73,5 @@ class ChallengeResultDialog extends StatelessWidget {
       ),
     );
   }
+
 }

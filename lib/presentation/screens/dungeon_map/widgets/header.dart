@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:super_quest/presentation/controllers/game_controller.dart';
+import 'package:super_quest/domain/models/dungeon.dart';
+import 'package:super_quest/domain/models/player.dart';
 import 'package:super_quest/presentation/theme/app_colors.dart';
 import 'package:super_quest/presentation/theme/app_spacing.dart';
 import 'package:super_quest/presentation/theme/app_text_styles.dart';
 
 class Header extends StatelessWidget {
-  final GameController controller;
-
-  const Header({super.key, required this.controller});
+  final Player player;
+  final Dungeon dungeon;
+  
+  const Header({super.key, required this.player, required this.dungeon});
 
   @override
   Widget build(BuildContext context) {
-    final player = controller.player;
-    final dungeon = controller.currentDungeon;
-
     final totalRooms = dungeon.rooms.length;
     final completedRooms =
         dungeon.rooms.where((r) => r.isCompleted).length;

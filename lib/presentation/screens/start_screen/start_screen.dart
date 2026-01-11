@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:super_quest/presentation/controllers/game_controller.dart';
-import 'package:super_quest/presentation/screens/dungeon_map/dugneon_map_screen.dart';
+import 'package:super_quest/data/data/game_data.dart';
+import 'package:super_quest/data/datasource/local_game_save_data_source.dart';
+import 'package:super_quest/data/repositories/game_save_repository.dart';
+import 'package:super_quest/domain/models/game_world.dart';
+import 'package:super_quest/domain/models/player.dart';
 import 'package:super_quest/presentation/screens/dungeon_select_screen/dungeon_select_screen.dart';
 import 'package:super_quest/presentation/widgets/buttons/primary_action_button.dart';
 import '../../theme/app_colors.dart';
@@ -9,6 +11,7 @@ import '../../theme/app_text_styles.dart';
 import '../../theme/app_spacing.dart';
 
 class StartScreen extends StatefulWidget {
+  
   const StartScreen({super.key});
 
   @override
@@ -16,16 +19,53 @@ class StartScreen extends StatefulWidget {
 }
 
 class _StartScreenState extends State<StartScreen> {
+  late GameSaveRepository saveRepository;
+  late GameWorld world;
+  late Player player;
+
+  bool isLoading = true;
+
   @override
   void initState() {
     super.initState();
-    _boot();
+    world = GameData.world;
+    player = Player.initial();
+    saveRepository = GameSaveRepository(LocalGameSaveDataSource());
+    loadGame();
   }
 
-  Future<void> _boot() async {
-    final controller = context.read<GameController>();
-    await controller.loadGame();
+  Future<void> loadGame() async {
+  final save = await saveRepository.load();
+
+  if (save != null) {
+    player.level = save.level;
+    player.xp = save.xp;
+
+    for (final dungeonProgress in save.dungeons) {
+      final dungeon = world.dungeons.firstWhere(
+        (d) => d.id == dungeonProgress.dungeonId,
+        orElse: () => throw Exception('Dungeon not found'),
+      );
+
+      dungeon.status = dungeonProgress.status;
+
+      for (final roomProgress in dungeonProgress.rooms) {
+        final room = dungeon.rooms.firstWhere(
+          (r) => r.id == roomProgress.roomId,
+          orElse: () => throw Exception('Room not found'),
+        );
+
+        room.status = roomProgress.status;
+        room.currentChallengeIndex = roomProgress.challengeIndex;
+      }
+    }
   }
+
+  setState(() {
+    isLoading = false;
+  });
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -54,20 +94,27 @@ class _StartScreenState extends State<StartScreen> {
                 const SizedBox(height: AppSpacing.xl),
 
                 PrimaryActionButton(
-                  label: 'START ADVENTURE',
+                  label: isLoading ? 'Loading...' : 'START ADVENTURE',
                   onPressed: () { 
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => const DungeonSelectScreen(),
-                      ),
-                    );
+                    isLoading ? null : goToDungeonSelect(context);
                   },
                 )
               ],
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  void goToDungeonSelect(BuildContext context) {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (_) => DungeonSelectScreen(
+          world: world,
+          player: player,
+          saveRepository: saveRepository,),
       ),
     );
   }
