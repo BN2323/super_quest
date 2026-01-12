@@ -50,7 +50,7 @@ class DungeonCompleteScreen extends StatelessWidget {
                     Navigator.popUntil(context, (route) => route.isFirst);
 
                   },
-                ),
+                 ),
             
                 const SizedBox(height: AppSpacing.md),
             

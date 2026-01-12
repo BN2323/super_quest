@@ -8,8 +8,8 @@ enum CodeBlockType {
 class CodeBlock {
   final String id;
   final CodeBlockType type;
-  final String label; // what user sees
-  final String value; // internal meaning
+  final String label;
+  final String value;
 
   CodeBlock({
     required this.id,

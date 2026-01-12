@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:super_quest/domain/models/challenge_outcome.dart';
 import 'package:super_quest/domain/models/code_block.dart';
 import 'package:super_quest/domain/models/dungeon.dart';
 import 'package:super_quest/domain/models/room.dart';
@@ -16,12 +15,12 @@ import 'package:super_quest/presentation/theme/app_colors.dart';
 import 'package:super_quest/presentation/theme/app_spacing.dart';
 
 class ChallengeScreen extends StatefulWidget {
-  final Dungeon dungeon;
-  final Room room;
+  final Dungeon currentDungeon;
+  final Room currentRoom;
 
   final SubmitResult? Function({
-    required Room room,
-    required Dungeon dungeon,
+    required Room currentRoom,
+    required Dungeon currentDungeon,
     required List<CodeBlock> userBlocks,
     required int hintsUsed,
   }) onSubmit;
@@ -29,8 +28,8 @@ class ChallengeScreen extends StatefulWidget {
 
   const ChallengeScreen({
     super.key,
-    required this.dungeon,
-    required this.room,
+    required this.currentDungeon,
+    required this.currentRoom,
     required this.onSubmit,
   });
 
@@ -46,7 +45,7 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final challenge = widget.room.currentChallenge;
+    final challenge = widget.currentRoom.currentChallenge;
     final expectedLength = challenge.expectedBlockOrder.length;
     final isComplete = _solution.length == expectedLength;
 
@@ -66,7 +65,7 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              ChallengeHeader(room: widget.room),
+              ChallengeHeader(room: widget.currentRoom),
 
               const SizedBox(height: AppSpacing.md),
               InstructionCard(text: challenge.description),
@@ -119,10 +118,10 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
   }
 
   void _useHint() {
-    final expected = widget.room.currentChallenge.expectedBlockOrder;
+    final expected = widget.currentRoom.currentChallenge.expectedBlockOrder;
     final placed = _solution.length;
 
-    if (_hintsUsed >= widget.room.currentChallenge.maxHints) {
+    if (_hintsUsed >= widget.currentRoom.currentChallenge.maxHints) {
       setState(() => _hintText = 'No hints left');
       return;
     }
@@ -145,8 +144,8 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
 
   void _submit() {
     final outcome = widget.onSubmit(
-      dungeon: widget.dungeon,
-      room: widget.room,
+      currentDungeon: widget.currentDungeon,
+      currentRoom: widget.currentRoom,
       userBlocks: _solution,
       hintsUsed: _hintsUsed,
     );
@@ -163,16 +162,18 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
       barrierDismissible: false,
       builder: (_) => ChallengeResultDialog(
         outcome: outcome,
-        isRoomComplete: outcome.roomCompleted,
+        isRoomCompleted: outcome.roomCompleted,
         onNext: () {
           Navigator.pop(context); // close dialog
 
           print('room is completed: ${outcome.roomCompleted}');
           if (outcome.roomCompleted) {
+            Navigator.pop(context); // close challenge screen
+
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                builder: (_) => RoomCompleteScreen(currentDungeon: widget.dungeon, room: widget.room, isDungeonCompleted: outcome.dungeonCompleted,),
+                builder: (_) => RoomCompleteScreen(currentDungeon: widget.currentDungeon, room: widget.currentRoom, isDungeonCompleted: outcome.dungeonCompleted,),
               ),
             );
           } else {

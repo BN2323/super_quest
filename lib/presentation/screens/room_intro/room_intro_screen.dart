@@ -11,21 +11,21 @@ import '../../theme/app_text_styles.dart';
 import '../../theme/app_spacing.dart';
 
 class RoomIntroScreen extends StatelessWidget {
-  final Dungeon dungeon;
-  final Room room;
+  final Dungeon currentDungeon;
+  final Room currentRoom;
 
   final SubmitResult? Function({
-    required Room room,
-    required Dungeon dungeon,
+    required Room currentRoom,
+    required Dungeon currentDungeon,
     required List<CodeBlock> userBlocks,
     required int hintsUsed,
   }) onSubmit;
 
   const RoomIntroScreen({
     super.key,
-    required this.room,
+    required this.currentRoom,
     required this.onSubmit, 
-    required this.dungeon,
+    required this.currentDungeon,
   });
 
   @override
@@ -40,7 +40,7 @@ class RoomIntroScreen extends StatelessWidget {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          room.name,
+          currentRoom.name,
           style: AppTextStyles.title,
         ),
         centerTitle: true,
@@ -56,11 +56,11 @@ class RoomIntroScreen extends StatelessWidget {
 
               // Room type
               Text(
-                room.isBossRoom
+                currentRoom.isBossRoom
                     ? 'Boss Room'
                     : 'Standard Room',
                 style: AppTextStyles.subtitle.copyWith(
-                  color: room.isBossRoom
+                  color: currentRoom.isBossRoom
                       ? AppColors.accent
                       : Colors.white70,
                 ),
@@ -70,7 +70,7 @@ class RoomIntroScreen extends StatelessWidget {
 
               // Room description
               Text(
-                room.isBossRoom
+                currentRoom.isBossRoom
                     ? 'This room contains multiple challenges.\nExpect tougher logic and fewer hints.'
                     : 'Complete all challenges in this room to progress.',
                 style: AppTextStyles.subtitle,
@@ -81,7 +81,7 @@ class RoomIntroScreen extends StatelessWidget {
               // Room info cards
               InfoCard(
                 title: 'Challenges',
-                value: '${room.challenges.length}',
+                value: '${currentRoom.challenges.length}',
               ),
 
               const Spacer(),
@@ -95,7 +95,7 @@ class RoomIntroScreen extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => ChallengeScreen(dungeon: dungeon, room: room, onSubmit: onSubmit),
+                        builder: (_) => ChallengeScreen(currentDungeon: currentDungeon, currentRoom: currentRoom, onSubmit: onSubmit),
                       ),
                     );
                   },

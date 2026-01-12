@@ -23,8 +23,10 @@ class DungeonSelectScreen extends StatefulWidget {
 class _DungeonSelectScreenState extends State<DungeonSelectScreen> {
   late Dungeon currentDungeon;
   
-  void selectDungeon(Dungeon dungeon) {
-    currentDungeon = dungeon;
+  void _selectDungeon(Dungeon dungeon) {
+    setState(() {
+      currentDungeon = dungeon;
+    });
   }
 
   @override
@@ -53,9 +55,9 @@ class _DungeonSelectScreenState extends State<DungeonSelectScreen> {
               dungeon: dungeon,
               onTap: dungeon.isLocked
                   ? null
-                  : () {
-                      selectDungeon(dungeon);
-                      Navigator.push(
+                  : () async {
+                      _selectDungeon(dungeon);
+                       await Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (_) => DungeonMapScreen(
@@ -66,6 +68,8 @@ class _DungeonSelectScreenState extends State<DungeonSelectScreen> {
                           ),
                         ),
                       );
+
+                      setState(() {});
                     },
             );
           },

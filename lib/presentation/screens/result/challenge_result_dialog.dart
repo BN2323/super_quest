@@ -8,14 +8,14 @@ import '../../theme/app_text_styles.dart';
 
 class ChallengeResultDialog extends StatelessWidget {
   final SubmitResult outcome;
-  final bool isRoomComplete;
+  final bool isRoomCompleted;
   final VoidCallback onNext;
   final VoidCallback onReturn;
 
   const ChallengeResultDialog({
     super.key,
     required this.outcome,
-    required this.isRoomComplete,
+    required this.isRoomCompleted,
     required this.onNext,
     required this.onReturn,
   });
@@ -34,7 +34,7 @@ class ChallengeResultDialog extends StatelessWidget {
           children: [
             // ===== TITLE =====
             Text(
-              isRoomComplete ? 'Room Complete!' : 'Challenge Complete!',
+              isRoomCompleted ? 'Room Complete!' : 'Challenge Complete!',
               style: AppTextStyles.title,
             ),
 
@@ -55,13 +55,13 @@ class ChallengeResultDialog extends StatelessWidget {
 
             // ===== ACTIONS =====
             PrimaryActionButton(
-              label: isRoomComplete
+              label: isRoomCompleted
                   ? 'CONTINUE'
                   : 'NEXT CHALLENGE',
               onPressed: onNext,
             ),
 
-            if (!isRoomComplete) ...[
+            if (!isRoomCompleted) ...[
               const SizedBox(height: AppSpacing.sm),
               TextButton(
                 onPressed: onReturn,

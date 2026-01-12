@@ -3,7 +3,6 @@ import 'package:super_quest/data/models/dungeon_progress.dart';
 import 'package:super_quest/data/models/game_save.dart';
 import 'package:super_quest/data/models/room_progress.dart';
 import 'package:super_quest/data/repositories/game_save_repository.dart';
-import 'package:super_quest/domain/models/challenge_outcome.dart';
 import 'package:super_quest/domain/models/code_block.dart';
 import 'package:super_quest/domain/models/dungeon.dart';
 import 'package:super_quest/domain/models/game_world.dart';
@@ -52,7 +51,7 @@ class _DungeonMapScreenState extends State<DungeonMapScreen> {
     );
   }
 
-  void selectRoom(Room room) {
+  void _selectRoom(Room room) {
     if (room.isLocked) return;
 
     setState(() {
@@ -60,43 +59,24 @@ class _DungeonMapScreenState extends State<DungeonMapScreen> {
     });
   }
 
-  void enterCurrentRoom(BuildContext context) {
+  void _enterCurrentRoom(BuildContext context) {
     if (currentRoom.isLocked) return;
 
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => RoomIntroScreen(dungeon: currentDungeon, room: currentRoom, onSubmit: submitChallenge,),
+        builder: (_) => RoomIntroScreen(currentDungeon: currentDungeon, currentRoom: currentRoom, onSubmit: _submitChallenge,),
       ),
     );
   }
 
-
-  void completeCurrentDungeon() {
-    if (currentDungeon.isCompleted) return;
-
-    currentDungeon.complete();
-
-    final index = widget.world.dungeons.indexOf(currentDungeon);
-
-    if (index != -1 && index + 1 < widget.world.dungeons.length) {
-      final nextDungeon = widget.world.dungeons[index + 1];
-      nextDungeon.unlock();
-      
-      if (nextDungeon.rooms.isNotEmpty) {
-        nextDungeon.rooms.first.unlock();
-      }
-    }
-  }
-
-  SubmitResult submitChallenge({
-    required Room room,
-    required Dungeon dungeon,
+  SubmitResult _submitChallenge({
+    required Room currentRoom,
+    required Dungeon currentDungeon,
     required List<CodeBlock> userBlocks,
     required int hintsUsed,
   }) {
-
-    final challenge = room.currentChallenge;
+    final challenge = currentRoom.currentChallenge;
 
     final outcome = challengeService.evaluate(
       challenge: challenge,
@@ -108,28 +88,27 @@ class _DungeonMapScreenState extends State<DungeonMapScreen> {
       throw Exception('Invalid solution');
     }
 
-    bool roomCompleted = false;
-    bool dungeonCompleted = false;
+    final result = gameService.submitChallenge(
+      dungeon: currentDungeon,
+      room: currentRoom,
+      outcome: outcome,
+      player: widget.player,
+    );
 
-    if (!room.isLastChallenge) {
-      room.advanceChallenge();
-    } else {
-      room.complete();
-      roomCompleted = true;
-
-      if (dungeon.rooms.every((r) => r.isCompleted)) {
-        dungeon.complete();
-        dungeonCompleted = true;
-      }
+    if (result.dungeonCompleted) {
+      gameService.unlockNextDungeon(widget.world, currentDungeon);
     }
 
-    return SubmitResult(
-      outcome: outcome,
-      challengeAdvanced: !roomCompleted,
-      roomCompleted: roomCompleted,
-      dungeonCompleted: dungeonCompleted,
-    );
+    setState(() {
+      if (result.roomCompleted) {
+        currentRoom = _findInitialRoom(currentDungeon);
+      }
+    });
+
+    saveGame();
+    return result;
   }
+
 
 
   Future<void> saveGame() async {
@@ -182,12 +161,12 @@ class _DungeonMapScreenState extends State<DungeonMapScreen> {
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: DungeonMap(currentDungeon: currentDungeon, currentRoom: currentRoom, selectRoom: selectRoom,),
+                child: DungeonMap(currentDungeon: currentDungeon, currentRoom: currentRoom, selectRoom: _selectRoom,),
               ),
             ),
 
             // Bottom call to action
-            BottomAction(currentRoom: currentRoom, enterCurrentRoom: enterCurrentRoom,),
+            BottomAction(currentRoom: currentRoom, enterCurrentRoom: _enterCurrentRoom,),
           ],
         ),
       ),
