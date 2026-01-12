@@ -54,8 +54,12 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
         backgroundColor: AppColors.background,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
+          icon: const Icon(Icons.home),
+          color: Colors.white,
+          onPressed: () {
+            Navigator.pop(context);
+            Navigator.pop(context);
+          },
         ),
       ),
       backgroundColor: AppColors.background,
