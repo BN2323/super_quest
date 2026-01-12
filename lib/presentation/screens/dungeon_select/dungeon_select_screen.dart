@@ -4,7 +4,7 @@ import 'package:super_quest/domain/models/dungeon.dart';
 import 'package:super_quest/domain/models/game_world.dart';
 import 'package:super_quest/domain/models/player.dart';
 import 'package:super_quest/presentation/screens/dungeon_map/dugneon_map_screen.dart';
-import 'package:super_quest/presentation/screens/dungeon_select_screen/widgets/dungeon_card.dart';
+import 'package:super_quest/presentation/screens/dungeon_select/widgets/dungeon_card.dart';
 import 'package:super_quest/presentation/theme/app_text_styles.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';

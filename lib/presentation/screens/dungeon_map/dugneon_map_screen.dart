@@ -70,12 +70,14 @@ class _DungeonMapScreenState extends State<DungeonMapScreen> {
     );
   }
 
-  SubmitResult _submitChallenge({
+  SubmitResult? _submitChallenge ({
     required Room currentRoom,
     required Dungeon currentDungeon,
     required List<CodeBlock> userBlocks,
     required int hintsUsed,
   }) {
+    print('currrent room before: ${currentRoom.name}');
+
     final challenge = currentRoom.currentChallenge;
 
     final outcome = challengeService.evaluate(
@@ -85,7 +87,7 @@ class _DungeonMapScreenState extends State<DungeonMapScreen> {
     );
 
     if (outcome == null) {
-      throw Exception('Invalid solution');
+      return null;
     }
 
     final result = gameService.submitChallenge(
@@ -100,9 +102,13 @@ class _DungeonMapScreenState extends State<DungeonMapScreen> {
     }
 
     setState(() {
+      print('result room: ${result.roomCompleted}');
       if (result.roomCompleted) {
         currentRoom = _findInitialRoom(currentDungeon);
+        _selectRoom(currentRoom);
       }
+      
+      print('currrent room after: ${currentRoom.name}');
     });
 
     saveGame();

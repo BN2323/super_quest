@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:super_quest/domain/models/dungeon.dart';
 import 'package:super_quest/domain/models/room.dart';
-import 'package:super_quest/presentation/screens/dungeon_complete_screen/dungeon_complete_screen.dart';
+import 'package:super_quest/presentation/screens/dungeon_completed/dungeon_complete_screen.dart';
 import 'package:super_quest/presentation/theme/app_colors.dart';
 import 'package:super_quest/presentation/theme/app_spacing.dart';
 import 'package:super_quest/presentation/theme/app_text_styles.dart';

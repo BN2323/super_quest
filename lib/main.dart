@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:super_quest/presentation/screens/start_screen/start_screen.dart';
+import 'package:super_quest/presentation/screens/start/start_screen.dart';
 
 void main() {
-  runApp(const SuperQuestApp());
+  runApp(const MyApp());
 }
 
-class SuperQuestApp extends StatelessWidget {
-  const SuperQuestApp({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {

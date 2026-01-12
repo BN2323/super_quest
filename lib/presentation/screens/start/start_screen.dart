@@ -4,7 +4,7 @@
   import 'package:super_quest/data/repositories/game_save_repository.dart';
   import 'package:super_quest/domain/models/game_world.dart';
   import 'package:super_quest/domain/models/player.dart';
-  import 'package:super_quest/presentation/screens/dungeon_select_screen/dungeon_select_screen.dart';
+  import 'package:super_quest/presentation/screens/dungeon_select/dungeon_select_screen.dart';
   import 'package:super_quest/presentation/widgets/buttons/primary_action_button.dart';
   import '../../theme/app_colors.dart';
   import '../../theme/app_text_styles.dart';
