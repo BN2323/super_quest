@@ -61,11 +61,11 @@ class RoomCompleteScreen extends StatelessWidget {
                 const Spacer(),
             
                 PrimaryActionButton(
-                  label: isDungeonCompleted
+                  label: isDungeonCompleted && room.isBossRoom
                       ? 'FINISH DUNGEON'
                       : 'BACK TO MAP',
                   onPressed: () {
-                    if (isDungeonCompleted) {
+                    if (isDungeonCompleted && room.isBossRoom) {
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
