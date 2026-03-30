@@ -1,16 +1,35 @@
-# super_quest
+# SuperQuest 🎮🧩
 
-A new Flutter project.
+SuperQuest is a gamified Flutter mobile application that allows users to solve logic challenges using **drag-and-drop logic blocks**.  
+It turns learning and problem-solving into an interactive and fun experience, combining gamification, hints, and scoring systems to motivate users.
 
-## Getting Started
+---
 
-This project is a starting point for a Flutter application.
+## ✨ Features
 
-A few resources to get you started if this is your first Flutter project:
+- 🧩 **Drag-and-Drop Logic Blocks**: Users solve logic puzzles by arranging blocks in the correct sequence.  
+- 💡 **Hint System**: Provides helpful hints to guide users when they are stuck.  
+- 🏆 **Score System**: Tracks performance and rewards correct solutions.  
+- 📈 **Progress Tracking**: Users can see their scores and improvement over time.  
+- 📱 **Gamified UI**: Engaging, interactive, and mobile-friendly interface.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+---
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## 🛠️ Built With
+
+- **Flutter**  
+- **Dart**  
+- **Material Design**  
+
+> No external state management libraries are used; all state is handled locally.
+
+---
+
+## 📂 Project Structure
+
+```bash
+lib/
+├── data/        # Data models + local storage
+├── domain/       # Main logic
+├── presentation/       # Diplay the view to user
+└── main.dart      # App entry point
